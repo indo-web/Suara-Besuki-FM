@@ -9,72 +9,72 @@
     body { background: #000; color: #fff; overflow-x: hidden; }
     
     /* HEADER */
-   .header { position: fixed; top: 0; width: 100%; padding: 10px 15px; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
-   .btn-add { width: 35px; height: 35px; background: #808080; border-radius: 50%; border: none; color: #000; font-size: 24px; cursor: pointer; display: none; }
-   .btn-add.show { display: block; }
-   .profile-circle { width: 35px; height: 35px; background: #000; border: 2px solid #333; border-radius: 50%; cursor: pointer; background-size: cover; background-position: center; }
+  .header { position: fixed; top: 0; width: 100%; padding: 10px 15px; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+  .btn-add { width: 35px; height: 35px; background: #808080; border-radius: 50%; border: none; color: #000; font-size: 24px; cursor: pointer; display: none; line-height: 35px; text-align: center; }
+  .btn-add.show { display: block; }
+  .profile-circle { width: 35px; height: 35px; background: #000; border: 2px solid #333; border-radius: 50%; cursor: pointer; background-size: cover; background-position: center; }
     
     /* INFO BOX */
-   .container { padding-top: 60px; max-width: 600px; margin: 0 auto; }
-   .info-box { background: #D2B48C; margin: 10px; padding: 15px; border-radius: 8px; text-align: center; }
-   .info-box h1 { color: #fff; font-size: 18px; margin-bottom: 5px; }
-   .info-box h2 { color: #FFFF00; font-size: 16px; margin-bottom: 5px; }
-   .info-box.freq { color: #00FF00; font-size: 14px; }
-   .info-box.freq span { color: #808080; }
-   .info-box.city { color: #FF0000; font-size: 14px; margin: 5px 0; }
-   .info-box.tagline { color: #0000FF; font-size: 14px; }
-   .status-box { background: #8B4513; margin-top: 15px; padding: 10px; border-radius: 6px; }
-   .status-box.row { padding: 5px; font-size: 14px; }
-   .status-box.row.red { color: #FF0000; }
-   .status-box.row.yellow { color: #FFFF00; }
-   .status-box.row.green { color: #00FF00; }
-   .dot-kedip { width: 8px; height: 8px; background: #00FF00; border-radius: 50%; display: inline-block; margin-right: 5px; animation: kedip 1s infinite; }
+  .container { padding-top: 60px; max-width: 600px; margin: 0 auto; }
+  .info-box { background: #D2B48C; margin: 10px; padding: 15px; border-radius: 8px; text-align: center; }
+  .info-box h1 { color: #fff; font-size: 18px; margin-bottom: 5px; font-weight: normal; }
+  .info-box h2 { color: #FFFF00; font-size: 16px; margin-bottom: 5px; font-weight: normal; }
+  .info-box.freq { color: #00FF00; font-size: 14px; margin-bottom: 5px; }
+  .info-box.freq span { color: #808080; }
+  .info-box.city { color: #FF0000; font-size: 14px; margin-bottom: 5px; }
+  .info-box.tagline { color: #0000FF; font-size: 14px; }
+  .status-box { background: #8B4513; margin-top: 15px; padding: 10px; border-radius: 6px; }
+  .status-box.row { padding: 5px; font-size: 14px; text-align: center; }
+  .status-box.row.red { color: #FF0000; }
+  .status-box.row.yellow { color: #FFFF00; }
+  .status-box.row.green { color: #00FF00; }
+  .dot-kedip { width: 8px; height: 8px; background: #00FF00; border-radius: 50%; display: inline-block; margin-right: 5px; animation: kedip 1s infinite; }
     @keyframes kedip { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.3; } }
     
     /* LIVE CHAT */
-   .chat-input-wrap { margin: 10px; position: relative; }
-   .chat-input { width: 100%; background: #000; border: 2px solid #FF69B4; border-radius: 20px; padding: 10px 15px; color: #fff; font-size: 14px; }
-   .chat-input::placeholder { color: #808080; }
-   .btn-kirim-chat { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: #FFA500; border: none; padding: 6px 15px; border-radius: 15px; color: #000; font-weight: bold; cursor: pointer; display: none; }
-   .btn-kirim-chat.show { display: block; }
+  .chat-input-wrap { margin: 10px; position: relative; }
+  .chat-input { width: 100%; background: #000; border: 2px solid #FF69B4; border-radius: 20px; padding: 10px 15px; color: #fff; font-size: 14px; }
+  .chat-input::placeholder { color: #808080; }
+  .btn-kirim-chat { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: #FFA500; border: none; padding: 6px 15px; border-radius: 15px; color: #000; font-weight: bold; cursor: pointer; display: none; }
+  .btn-kirim-chat.show { display: block; }
     
     /* PLAYLIST */
-   .playlist { margin: 10px; }
-   .song-item { background: #111; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 13px; cursor: move; }
-   .song-item.playing { border: 2px solid #808080; }
-   .song-item.btn-del { background: #FF0000; border: none; width: 25px; height: 25px; border-radius: 3px; color: #fff; cursor: pointer; font-weight: bold; }
-   .song-item.btn-check { color: #00FF00; font-size: 20px; }
-   .song-item.dragging { opacity: 0.5; }
+  .playlist { margin: 10px; }
+  .song-item { background: #111; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 13px; cursor: move; }
+  .song-item.playing { border: 2px solid #808080; }
+  .song-item.btn-del { background: #FF0000; border: none; width: 25px; height: 25px; border-radius: 3px; color: #fff; cursor: pointer; font-weight: bold; }
+  .song-item.btn-check { color: #00FF00; font-size: 20px; }
+  .song-item.dragging { opacity: 0.5; }
     
     /* CHAT LIST */
-   .chat-list { margin: 10px; }
-   .chat-item { margin-bottom: 8px; font-size: 14px; }
-   .chat-item.user { color: #00FF00; font-weight: bold; }
-   .chat-item.msg { color: #fff; }
+  .chat-list { margin: 10px; }
+  .chat-item { margin-bottom: 8px; font-size: 14px; }
+  .chat-item.user { color: #00FF00; font-weight: bold; }
+  .chat-item.msg { color: #fff; }
     
     /* POPUP */
-   .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
-   .popup.show { display: flex; }
-   .popup-content { background: #000; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
-   .popup-login.btn-google { background: #fff; color: #000; padding: 12px; border: none; border-radius: 5px; width: 100%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-   .popup-login.profile-info { text-align: center; }
-   .popup-login.profile-info img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; }
-   .popup-login.profile-info.username { color: #808080; margin-bottom: 5px; }
-   .popup-login.profile-info.email { color: #808080; margin-bottom: 5px; }
-   .popup-login.profile-info.created { color: #808080; margin-bottom: 15px; }
-   .popup-login.btn-logout { background: #808080; color: #fff; padding: 12px; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
-   .popup-add input { width: 100%; background: #000; border: 2px solid #FFFF00; border-radius: 10px; padding: 12px; color: #fff; margin-bottom: 15px; }
-   .popup-add input::placeholder { color: #808080; }
-   .popup-add.btn-wrap { display: flex; gap: 10px; }
-   .popup-add.btn-wrap button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-   .btn-batal { background: #808080; color: #fff; }
-   .btn-kirim { background: #FF0000; color: #fff; }
+  .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+  .popup.show { display: flex; }
+  .popup-content { background: #000; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+  .popup-login.btn-google { background: #fff; color: #000; padding: 12px; border: none; border-radius: 5px; width: 100%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .popup-login.profile-info { text-align: center; }
+  .popup-login.profile-info img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; }
+  .popup-login.profile-info.username { color: #808080; margin-bottom: 5px; }
+  .popup-login.profile-info.email { color: #808080; margin-bottom: 5px; }
+  .popup-login.profile-info.created { color: #808080; margin-bottom: 15px; }
+  .popup-login.btn-logout { background: #808080; color: #fff; padding: 12px; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
+  .popup-add input { width: 100%; background: #000; border: 2px solid #FFFF00; border-radius: 10px; padding: 12px; color: #fff; margin-bottom: 15px; }
+  .popup-add input::placeholder { color: #808080; }
+  .popup-add.btn-wrap { display: flex; gap: 10px; }
+  .popup-add.btn-wrap button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+  .btn-batal { background: #808080; color: #fff; }
+  .btn-kirim { background: #FF0000; color: #fff; }
     
     /* PLAY BUTTON */
-   .play-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
-   .play-overlay.hide { display: none; }
-   .play-overlay button { background: #00FF00; color: #000; border: none; padding: 20px 40px; font-size: 20px; font-weight: bold; border-radius: 10px; cursor: pointer; }
-   .play-overlay p { color: #808080; margin-top: 15px; font-size: 14px; }
+  .play-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+  .play-overlay.hide { display: none; }
+  .play-overlay button { background: #00FF00; color: #000; border: none; padding: 20px 40px; font-size: 20px; font-weight: bold; border-radius: 10px; cursor: pointer; }
+  .play-overlay p { color: #808080; margin-top: 15px; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -160,16 +160,12 @@
     let startTime = null;
     let totalDuration = 0;
     let isPlaying = false;
-    let listenerCount = 0;
-    let lastActiveTime = Date.now();
 
-    // PLAY OVERLAY
     document.getElementById('btnPlayStart').onclick = () => {
       document.getElementById('playOverlay').classList.add('hide');
       initRadio();
     };
 
-    // AUTH
     const profileBtn = document.getElementById('profileBtn');
     const popupLogin = document.getElementById('popupLogin');
     const loginContent = document.getElementById('loginContent');
@@ -193,7 +189,9 @@
           </div>
         `;
         document.getElementById('btnLogout').onclick = () => signOut(auth);
-        trackListener();
+        const myRef = ref(rtdb, 'listeners/' + user.uid);
+        set(myRef, true);
+        onDisconnect(myRef).remove();
       } else {
         profileBtn.style.backgroundImage = '';
         loginContent.innerHTML = `<button class="btn-google" id="btnGoogle"><span style="font-size:20px;font-weight:bold;">G</span> Google</button>`;
@@ -201,18 +199,10 @@
       }
     });
 
-    // LISTENER COUNT
-    function trackListener() {
-      const myRef = ref(rtdb, 'listeners/' + auth.currentUser.uid);
-      set(myRef, true);
-      onDisconnect(myRef).remove();
-    }
     onValue(ref(rtdb, 'listeners'), (snap) => {
-      listenerCount = snap.size || 0;
-      document.getElementById('statusPendengar').textContent = listenerCount + ' pendengar';
+      document.getElementById('statusPendengar').textContent = (snap.size || 0) + ' pendengar';
     });
 
-    // ADD SONG
     const btnAdd = document.getElementById('btnAdd');
     const popupAdd = document.getElementById('popupAdd');
     const inputLink = document.getElementById('inputLink');
@@ -220,15 +210,13 @@
     const btnKirim = document.getElementById('btnKirim');
     
     btnAdd.onclick = () => popupAdd.classList.add('show');
-    btnBatal.onclick = () => { popupAdd.classList.remove('show'); inputLink.value = ''; }
+    btnBatal.onclick = () => { popupAdd.classList.remove('show'); inputLink.value = ''; btnKirim.style.display = 'none'; }
     popupAdd.onclick = (e) => { if(e.target === popupAdd) btnBatal.click(); }
     
     inputLink.oninput = () => {
       if(inputLink.value.trim()) {
-        btnBatal.style.flex = '1';
         btnKirim.style.display = 'block';
       } else {
-        btnBatal.style.flex = '1';
         btnKirim.style.display = 'none';
       }
     };
@@ -240,7 +228,7 @@
       tempAudio.onloadedmetadata = async () => {
         await addDoc(collection(db, 'playlist'), {
           url: link,
-          title: link.split('/').pop(),
+          title: link.split('/').pop().substring(0,30),
           duration: tempAudio.duration,
           order: Date.now(),
           created: serverTimestamp()
@@ -251,13 +239,13 @@
       tempAudio.onerror = () => alert('Link tidak valid!');
     };
 
-    // PLAYLIST
     onSnapshot(query(collection(db, 'playlist'), orderBy('order')), (snap) => {
       playlist = [];
       snap.forEach(doc => playlist.push({ id: doc.id,...doc.data() }));
       renderPlaylist();
-      updatePlayStatus();
+      document.getElementById('statusPlay').textContent = playlist.length + ' play';
       if(!isPlaying && playlist.length > 0) syncRadio();
+      else if(playlist.length === 0) document.getElementById('statusSiaran').textContent = 'radio sedang tidak siaran';
     });
 
     function renderPlaylist() {
@@ -300,7 +288,6 @@
       if(confirm('Hapus permanen?')) await deleteDoc(doc(db, 'playlist', id));
     };
 
-    // RADIO SYNC
     async function initRadio() {
       const stateDoc = await getDocs(query(collection(db, 'radio_state')));
       if(stateDoc.empty) {
@@ -318,7 +305,6 @@
         audio.pause();
         return;
       }
-      
       onSnapshot(doc(db, 'radio_state', 'current'), (snap) => {
         if(!snap.exists()) return;
         const data = snap.data();
@@ -341,16 +327,15 @@
           const songOffset = elapsed - (accumulated - playlist[i].duration);
           audio.src = playlist[i].url;
           audio.currentTime = songOffset;
-          audio.play();
+          audio.play().catch(()=>{});
           isPlaying = true;
           document.getElementById('statusSiaran').textContent = 'radio sedang siaran';
           renderPlaylist();
-          break;
+          return;
         }
       }
       
       if(elapsed >= totalDuration) {
-        currentIndex = 0;
         setDoc(doc(db, 'radio_state', 'current'), {
           startTime: serverTimestamp(),
           currentIndex: 0
@@ -361,7 +346,6 @@
     audio.onended = () => {
       currentIndex++;
       if(currentIndex >= playlist.length) {
-        currentIndex = 0;
         setDoc(doc(db, 'radio_state', 'current'), {
           startTime: serverTimestamp(),
           currentIndex: 0
@@ -371,11 +355,6 @@
       }
     };
 
-    function updatePlayStatus() {
-      document.getElementById('statusPlay').textContent = playlist.length + ' play';
-    }
-
-    // CHAT
     const chatInput = document.getElementById('chatInput');
     const btnKirimChat = document.getElementById('btnKirimChat');
     
@@ -403,7 +382,7 @@
       snap.forEach(doc => {
         const data = doc.data();
         const age = now - (data.created?.toMillis() || now);
-        if(age < 86400000) { // 24 jam
+        if(age < 86400000) {
           const div = document.createElement('div');
           div.className = 'chat-item';
           div.innerHTML = `<span class="user">${data.user}</span> <span class="msg">${data.msg}</span>`;
@@ -412,10 +391,9 @@
       });
     });
 
-    // AUTO STOP
     window.onbeforeunload = () => {
       if(currentUser) set(ref(rtdb, 'listeners/' + currentUser.uid), null);
     };
   </script>
 </body>
-    </html>
+  </html>
