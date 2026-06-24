@@ -1,110 +1,113 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoPlayer Playlist Online</title>
-<style>
-    * { box-sizing: border-box; }
-    body {
-        background-color: #000;
-        color: #fff;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 20px;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPlayer Playlist Online</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .header-box { display: flex; gap: 10px; margin-bottom: 20px; position: sticky; top: 20px; z-index: 10; }
+        input[type="url"] { flex: 1; padding: 12px 15px; background-color: #222; border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 16px; outline: none; }
+        button.kirim { padding: 12px 25px; background-color: #007bff; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        li { background-color: #151515; margin-bottom: 10px; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        li.playing { border-color: #0f0; background-color: #1a251a; }
+        .link-text { flex: 1; margin-right: 15px; font-size: 14px; word-break: break-all; }
+        .cross { color: #ff4d4d; cursor: pointer; font-size: 18px; }
+        #alertBox { display: none; background-color: #ff9800; color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="header-box">
+    <input type="url" id="linkInput" placeholder="Tempel link .mp3 di sini..." autocomplete="off">
+    <button class="kirim" onclick="addLink()">Kirim</button>
+</div>
+
+<div id="alertBox" onclick="resumeAudio()">⚠️ Browser memblokir Auto-play. Klik di sini!</div>
+
+<ul id="playlistContainer"></ul>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDrEQ7GcPPo8CbqF0_dRwDlXSXbz1FsmPs",
+        authDomain: "hahahihi-5084e.firebaseapp.com",
+        databaseURL: "https://hahahihi-5084e-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "hahahihi-5084e",
+        storageBucket: "hahahihi-5084e.firebasestorage.app",
+        messagingSenderId: "691544964510",
+        appId: "1:691544964510:web:561a1aed05c8a8f5ff6a8f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db, 'playerState');
+
+    let playlist = [];
+    let currentIndex = 0;
+    const audio = new Audio();
+    const container = document.getElementById('playlistContainer');
+
+    // 1. Sinkronisasi Realtime
+    onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            playlist = data.playlist || [];
+            currentIndex = data.currentIndex || 0;
+            renderList();
+            playCurrent();
+        }
+    });
+
+    // 2. Fungsi Global untuk HTML
+    window.addLink = function() {
+        const input = document.getElementById('linkInput');
+        if (!input.value.trim()) return;
+        playlist.push({ url: input.value.trim(), id: Date.now() });
+        saveData();
+        input.value = '';
+    };
+
+    window.deleteLink = function(id) {
+        playlist = playlist.filter(item => item.id !== id);
+        if (currentIndex >= playlist.length) currentIndex = 0;
+        saveData();
+    };
+
+    window.resumeAudio = function() {
+        audio.play().then(() => document.getElementById('alertBox').style.display = 'none');
+    };
+
+    function saveData() {
+        set(dbRef, { playlist, currentIndex }).catch(e => alert("Gagal Simpan: " + e.message));
     }
-    .header-box {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        position: sticky;
-        top: 20px;
-        z-index: 10;
+
+    function playCurrent() {
+        if (playlist.length === 0 || audio.src === playlist[currentIndex]?.url) return;
+        audio.src = playlist[currentIndex].url;
+        audio.play().catch(() => document.getElementById('alertBox').style.display = 'block');
     }
-    input[type="url"] {
-        flex: 1;
-        padding: 12px 15px;
-        background-color: #222;
-        border: 1px solid #444;
-        border-radius: 8px;
-        color: #fff;
-        font-size: 16px;
-        outline: none;
-        transition: border-color 0.3s;
+
+    audio.onended = () => {
+        currentIndex = (currentIndex + 1) % playlist.length;
+        saveData();
+    };
+
+    function renderList() {
+        container.innerHTML = playlist.map((item, i) => `
+            <li class="${i === currentIndex ? 'playing' : ''}">
+                <div class="link-text">${item.url}</div>
+                <div class="cross" onclick="deleteLink(${item.id})">❌</div>
+            </li>
+        `).join('');
     }
-    input[type="url"]:focus {
-        border-color: #007bff;
-    }
-    button.kirim {
-        padding: 12px 25px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.3s;
-    }
-    button.kirim:hover {
-        background-color: #0056b3;
-    }
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    li {
-        background-color: #151515;
-        margin-bottom: 10px;
-        padding: 15px;
-        border-radius: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: grab;
-        border: 1px solid #333;
-        transition: transform 0.2s, background-color 0.2s;
-    }
-    li:active {
-        cursor: grabbing;
-    }
-    li.playing {
-        border-color: #0f0;
-        background-color: #1a251a;
-    }
-    li.dragging {
-        opacity: 0.4;
-        background-color: #333;
-    }
-    .link-text {
-        flex: 1;
-        margin-right: 15px;
-        font-size: 14px;
-        word-break: break-all;
-        pointer-events: none;
-    }
-    .icon {
-        font-size: 18px;
-        user-select: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .check {
-        color: #0f0;
-        cursor: default;
-    }
-    .cross {
-        color: #ff4d4d;
-        cursor: pointer;
-        padding: 5px;
-        transition: transform 0.2s;
-    }
-    .cross:hover {
+</script>
+</body>
+</html>
         transform: scale(1.3);
     }
     #alertBox {
