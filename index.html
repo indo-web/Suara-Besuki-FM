@@ -1,357 +1,421 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suara Besuki FM 102.5 Mhz - Cahaya Selatan Tulungagung</title>
-    <meta name="description" content="Suara Besuki FM 102.5 Mhz Cahaya Selatan dari Tulungagung - Radio Dakwah & Informasi Besuki">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .glow-bg { position: fixed; top: 50%; left: 50%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, rgba(255,140,0,0.05) 40%, transparent 70%); transform: translate(-50%, -50%); pointer-events: none; animation: pulse 4s ease-in-out infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); } }
-        .container { text-align: center; z-index: 10; padding: 20px; }
-        h1 { font-size: 3.5rem; font-weight: 900; background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(255, 215, 0, 0.5); margin-bottom: 5px; letter-spacing: 2px; }
-        .freq { font-size: 2.5rem; font-weight: 700; color: #FFA500; margin-bottom: 15px; text-shadow: 0 0 20px rgba(255, 165, 0, 0.6); }
-        h2 { font-size: 1.8rem; color: #FFA500; font-weight: 300; margin-bottom: 5px; letter-spacing: 4px; }
-        h3 { font-size: 1.2rem; color: #888; font-weight: 400; margin-bottom: 40px; }
-        .player-box { background: rgba(20, 20, 20, 0.8); border: 2px solid rgba(255, 215, 0, 0.3); border-radius: 20px; padding: 30px 40px; backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2); min-width: 350px; }
-        .now-playing { font-size: 0.9rem; color: #FFA500; margin-bottom: 10px; min-height: 20px; word-break: break-all; }
-        .listeners { font-size: 1.1rem; color: #0f0; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .listeners::before { content: '●'; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .header { position: fixed; top: 0; right: 0; padding: 20px; z-index: 100; display: flex; gap: 10px; align-items: center; }
-        .profile-btn { background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); color: #FFD700; padding: 10px 20px; border-radius: 25px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
-        .profile-btn:hover { background: rgba(255, 215, 0, 0.2); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
-        .profile-btn img { width: 30px; height: 30px; border-radius: 50%; }
-       
-        .upload-btn { 
-            position: fixed; 
-            top: 20px; 
-            left: 20px; 
-            width: 60px; 
-            height: 60px; 
-            background: linear-gradient(45deg, #FFD700, #FFA500); 
-            border: none; 
-            border-radius: 50%; 
-            font-size: 2rem; 
-            color: #000; 
-            cursor: pointer; 
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); 
-            transition: all 0.3s; 
-            z-index: 90; 
-            display: none; 
-        }
-        .upload-btn:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); }
-       
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: #111; border: 2px solid rgba(255, 215, 0, 0.3); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 0 60px rgba(255, 215, 0, 0.3); position: relative; }
-        .modal-content h2 { color: #FFD700; margin-bottom: 10px; }
-        .google-btn { background: #fff; color: #000; border: none; padding: 15px 30px; border-radius: 10px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 10px; margin: 20px auto; transition: all 0.3s; }
-        .google-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
-        .google-btn:disabled { background: #888; cursor: not-allowed; }
-        
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; color: #FFA500; font-size: 0.9rem; margin-bottom: 5px; }
-        .form-input { width: 100%; padding: 12px; background: #222; border: 1px solid rgba(255, 215, 0, 0.4); border-radius: 8px; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; }
-        .form-input:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-
-        .btn { background: linear-gradient(45deg, #FFD700, #FFA500); color: #000; border: none; padding: 12px 30px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.3s; width: 100%; }
-        .btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-danger { background: linear-gradient(45deg, #ff4444, #cc0000); color: #fff; width: auto; margin-top: 20px; }
-        
-        .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #FFD700; font-size: 2rem; cursor: pointer; }
-        #audioPlayer { display: none; }
-        .queue-info { color: #666; font-size: 0.85rem; margin-top: 15px; }
-       
-        .admin-debug { position: fixed; bottom: 10px; left: 10px; background: rgba(255,0,0,0.8); color: #fff; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; z-index: 9999; display: none; }
-       
-        @media (max-width: 600px) { 
-            h1 { font-size: 2.5rem; }.freq { font-size: 2rem; } h2 { font-size: 1.4rem; }.player-box { min-width: 300px; padding: 20px; } 
-            .upload-btn { top: 15px; left: 15px; width: 50px; height: 50px; font-size: 1.5rem; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radio Suara Besuki FM 102.5</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { background: #000; color: #fff; overflow-x: hidden; }
+    
+    /* HEADER */
+   .header { position: fixed; top: 0; width: 100%; padding: 10px 15px; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+   .btn-add { width: 35px; height: 35px; background: #808080; border-radius: 50%; border: none; color: #000; font-size: 24px; cursor: pointer; display: none; }
+   .btn-add.show { display: block; }
+   .profile-circle { width: 35px; height: 35px; background: #000; border: 2px solid #333; border-radius: 50%; cursor: pointer; background-size: cover; background-position: center; }
+    
+    /* INFO BOX */
+   .container { padding-top: 60px; max-width: 600px; margin: 0 auto; }
+   .info-box { background: #D2B48C; margin: 10px; padding: 15px; border-radius: 8px; text-align: center; }
+   .info-box h1 { color: #fff; font-size: 18px; margin-bottom: 5px; }
+   .info-box h2 { color: #FFFF00; font-size: 16px; margin-bottom: 5px; }
+   .info-box.freq { color: #00FF00; font-size: 14px; }
+   .info-box.freq span { color: #808080; }
+   .info-box.city { color: #FF0000; font-size: 14px; margin: 5px 0; }
+   .info-box.tagline { color: #0000FF; font-size: 14px; }
+   .status-box { background: #8B4513; margin-top: 15px; padding: 10px; border-radius: 6px; }
+   .status-box.row { padding: 5px; font-size: 14px; }
+   .status-box.row.red { color: #FF0000; }
+   .status-box.row.yellow { color: #FFFF00; }
+   .status-box.row.green { color: #00FF00; }
+   .dot-kedip { width: 8px; height: 8px; background: #00FF00; border-radius: 50%; display: inline-block; margin-right: 5px; animation: kedip 1s infinite; }
+    @keyframes kedip { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.3; } }
+    
+    /* LIVE CHAT */
+   .chat-input-wrap { margin: 10px; position: relative; }
+   .chat-input { width: 100%; background: #000; border: 2px solid #FF69B4; border-radius: 20px; padding: 10px 15px; color: #fff; font-size: 14px; }
+   .chat-input::placeholder { color: #808080; }
+   .btn-kirim-chat { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: #FFA500; border: none; padding: 6px 15px; border-radius: 15px; color: #000; font-weight: bold; cursor: pointer; display: none; }
+   .btn-kirim-chat.show { display: block; }
+    
+    /* PLAYLIST */
+   .playlist { margin: 10px; }
+   .song-item { background: #111; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 13px; cursor: move; }
+   .song-item.playing { border: 2px solid #808080; }
+   .song-item.btn-del { background: #FF0000; border: none; width: 25px; height: 25px; border-radius: 3px; color: #fff; cursor: pointer; font-weight: bold; }
+   .song-item.btn-check { color: #00FF00; font-size: 20px; }
+   .song-item.dragging { opacity: 0.5; }
+    
+    /* CHAT LIST */
+   .chat-list { margin: 10px; }
+   .chat-item { margin-bottom: 8px; font-size: 14px; }
+   .chat-item.user { color: #00FF00; font-weight: bold; }
+   .chat-item.msg { color: #fff; }
+    
+    /* POPUP */
+   .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+   .popup.show { display: flex; }
+   .popup-content { background: #000; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+   .popup-login.btn-google { background: #fff; color: #000; padding: 12px; border: none; border-radius: 5px; width: 100%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+   .popup-login.profile-info { text-align: center; }
+   .popup-login.profile-info img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; }
+   .popup-login.profile-info.username { color: #808080; margin-bottom: 5px; }
+   .popup-login.profile-info.email { color: #808080; margin-bottom: 5px; }
+   .popup-login.profile-info.created { color: #808080; margin-bottom: 15px; }
+   .popup-login.btn-logout { background: #808080; color: #fff; padding: 12px; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
+   .popup-add input { width: 100%; background: #000; border: 2px solid #FFFF00; border-radius: 10px; padding: 12px; color: #fff; margin-bottom: 15px; }
+   .popup-add input::placeholder { color: #808080; }
+   .popup-add.btn-wrap { display: flex; gap: 10px; }
+   .popup-add.btn-wrap button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+   .btn-batal { background: #808080; color: #fff; }
+   .btn-kirim { background: #FF0000; color: #fff; }
+    
+    /* PLAY BUTTON */
+   .play-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+   .play-overlay.hide { display: none; }
+   .play-overlay button { background: #00FF00; color: #000; border: none; padding: 20px 40px; font-size: 20px; font-weight: bold; border-radius: 10px; cursor: pointer; }
+   .play-overlay p { color: #808080; margin-top: 15px; font-size: 14px; }
+  </style>
 </head>
 <body>
-    <div class="glow-bg"></div>
+  <div class="play-overlay" id="playOverlay">
+    <button id="btnPlayStart">KETUK UNTUK DENGERIN</button>
+    <p>Tap 1x untuk mulai radio</p>
+  </div>
+
+  <div class="header">
+    <button class="btn-add" id="btnAdd">+</button>
+    <div class="profile-circle" id="profileBtn"></div>
+  </div>
+
+  <div class="container">
+    <div class="info-box">
+      <h1>Radio</h1>
+      <h2>Suara Besuki FM</h2>
+      <div class="freq">102.5 <span>Mhz</span></div>
+      <div class="city">Tulungagung</div>
+      <div class="tagline">Cahaya dari Selatan</div>
+      <div class="status-box">
+        <div class="row red" id="statusSiaran">radio sedang tidak siaran</div>
+        <div class="row yellow" id="statusPlay">0 play</div>
+        <div class="row green"><span class="dot-kedip"></span><span id="statusPendengar">0 pendengar</span></div>
+      </div>
+    </div>
+
+    <div class="chat-input-wrap">
+      <input type="text" class="chat-input" id="chatInput" placeholder="live chat" maxlength="100">
+      <button class="btn-kirim-chat" id="btnKirimChat">kirim</button>
+    </div>
+
+    <div class="playlist" id="playlist"></div>
+    <div class="chat-list" id="chatList"></div>
+  </div>
+
+  <!-- POPUP LOGIN -->
+  <div class="popup popup-login" id="popupLogin">
+    <div class="popup-content" id="loginContent"></div>
+  </div>
+
+  <!-- POPUP ADD -->
+  <div class="popup popup-add" id="popupAdd">
+    <div class="popup-content">
+      <input type="text" id="inputLink" placeholder="link">
+      <div class="btn-wrap">
+        <button class="btn-batal" id="btnBatal">batal</button>
+        <button class="btn-kirim" id="btnKirim" style="display:none;">kirim</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audioPlayer"></audio>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, serverTimestamp, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrEQ7GcPPo8CbqF0_dRwDlXSXbz1FsmPs",
+      authDomain: "hahahihi-5084e.firebaseapp.com",
+      databaseURL: "https://hahahihi-5084e-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "hahahihi-5084e",
+      storageBucket: "hahahihi-5084e.firebasestorage.app",
+      messagingSenderId: "691544964510",
+      appId: "1:691544964510:web:561a1aed05c8a8f5ff6a8f"
+    };
+
+    const ADMIN_UID = "hz3aHzi9GwMGqwwBtxdU1dA4r9e2";
     
-    <div class="admin-debug" id="adminDebug"></div>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const rtdb = getDatabase(app);
     
-    <button class="upload-btn" id="uploadBtn" title="Tambah Audio - Admin Only">+</button>
+    let currentUser = null;
+    let isAdmin = false;
+    let playlist = [];
+    let currentIndex = 0;
+    let audio = document.getElementById('audioPlayer');
+    let startTime = null;
+    let totalDuration = 0;
+    let isPlaying = false;
+    let listenerCount = 0;
+    let lastActiveTime = Date.now();
+
+    // PLAY OVERLAY
+    document.getElementById('btnPlayStart').onclick = () => {
+      document.getElementById('playOverlay').classList.add('hide');
+      initRadio();
+    };
+
+    // AUTH
+    const profileBtn = document.getElementById('profileBtn');
+    const popupLogin = document.getElementById('popupLogin');
+    const loginContent = document.getElementById('loginContent');
     
-    <div class="header">
-        <button class="profile-btn" id="profileBtn" style="display:none;">
-            <img id="userAvatar" src="" alt="User">
-            <span id="userName"></span>
-        </button>
-    </div>
-    <div class="container">
-        <h1>Suara Besuki FM</h1>
-        <div class="freq">102.5 Mhz</div>
-        <h2>CAHAYA SELATAN</h2>
-        <h3>TULUNGAGUNG</h3>
-        <div class="player-box">
-            <div class="now-playing" id="nowPlaying">Menunggu siaran...</div>
-            <audio id="audioPlayer"></audio>
-            <div class="queue-info" id="queueInfo"></div>
-            <div class="listeners"><span id="listenerCount">0</span> Pendengar</div>
-        </div>
-    </div>
+    profileBtn.onclick = () => popupLogin.classList.add('show');
+    popupLogin.onclick = (e) => { if(e.target === popupLogin) popupLogin.classList.remove('show'); }
 
-    <div class="modal active" id="loginModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('loginModal')" style="display:none;">&times;</button>
-            <h2>Selamat Datang di Suara Besuki FM 102.5</h2>
-            <p style="color: #888; margin-bottom: 20px;">Silakan login untuk mendengarkan siaran</p>
-            <button class="google-btn" id="loginBtn">
-                <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-                <span id="loginText">Login dengan Google</span>
-            </button>
-        </div>
-    </div>
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      isAdmin = user && user.uid === ADMIN_UID;
+      document.getElementById('btnAdd').classList.toggle('show', isAdmin);
+      if(user) {
+        profileBtn.style.backgroundImage = `url(${user.photoURL})`;
+        loginContent.innerHTML = `
+          <div class="profile-info">
+            <img src="${user.photoURL}">
+            <div class="username">${user.displayName}</div>
+            <div class="email">${user.email}</div>
+            <div class="created">dibuat ${new Date(user.metadata.creationTime).toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'})}</div>
+            <button class="btn-logout" id="btnLogout">Log Out</button>
+          </div>
+        `;
+        document.getElementById('btnLogout').onclick = () => signOut(auth);
+        trackListener();
+      } else {
+        profileBtn.style.backgroundImage = '';
+        loginContent.innerHTML = `<button class="btn-google" id="btnGoogle"><span style="font-size:20px;font-weight:bold;">G</span> Google</button>`;
+        document.getElementById('btnGoogle').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
+      }
+    });
 
-    <div class="modal" id="profileModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('profileModal')">&times;</button>
-            <h2>Profil</h2>
-            <img id="profileAvatar" style="width:80px;height:80px;border-radius:50%;margin:20px auto;">
-            <p id="profileName" style="font-size:1.2rem;margin:10px 0;"></p>
-            <p id="profileEmail" style="color:#888;margin-bottom:20px;"></p>
-            <button class="btn btn-danger" id="logoutBtn">Logout</button>
-        </div>
-    </div>
+    // LISTENER COUNT
+    function trackListener() {
+      const myRef = ref(rtdb, 'listeners/' + auth.currentUser.uid);
+      set(myRef, true);
+      onDisconnect(myRef).remove();
+    }
+    onValue(ref(rtdb, 'listeners'), (snap) => {
+      listenerCount = snap.size || 0;
+      document.getElementById('statusPendengar').textContent = listenerCount + ' pendengar';
+    });
 
-    <div class="modal" id="uploadModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('uploadModal')">&times;</button>
-            <h2>Tambah Siaran / Audio</h2>
-            <p style="color:#888;margin-bottom:20px;">Masukkan detail link audio streaming langsung</p>
-            
-            <div class="form-group">
-                <label for="trackName">Nama Lagu / Judul Siaran</label>
-                <input type="text" id="trackName" class="form-input" placeholder="Contoh: Pengajian Besuki Hari Ini">
-            </div>
-
-            <div class="form-group">
-                <label for="trackUrl">URL Direct Audio (.mp3 / URL Stream)</label>
-                <input type="url" id="trackUrl" class="form-input" placeholder="Contoh: https://server.com/audio.mp3">
-            </div>
-            
-            <button class="btn" id="addBtn">Tambahkan ke Antrian</button>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-        import { getDatabase, ref as dbRef, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDrEQ7GcPPo8CbqF0_dRwDlXSXbz1FsmPs",
-            authDomain: "hahahihi-5084e.firebaseapp.com",
-            databaseURL: "https://hahahihi-5084e-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "hahahihi-5084e",
-            storageBucket: "hahahihi-5084e.firebasestorage.app",
-            messagingSenderId: "691544964510",
-            appId: "1:691544964510:web:561a1aed05c8a8f5ff6a8f"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const rtdb = getDatabase(app);
-
-        let currentUser = null;
-        let isAdmin = false;
-        let currentTrack = null;
-        let localQueue = []; // Diperlukan agar audio kedua bisa langsung mutar (autoplay)
-        let queueUnsubscribe = null;
-
-        const audioPlayer = document.getElementById('audioPlayer');
-        const loginModal = document.getElementById('loginModal');
-        const profileModal = document.getElementById('profileModal');
-        const uploadModal = document.getElementById('uploadModal');
-        const adminDebug = document.getElementById('adminDebug');
-
-        // SISTEM LOGIN DIUBAH KE REDIRECT (ANTI ERROR DI HP)
-        document.getElementById('loginBtn').onclick = () => {
-            const loginBtn = document.getElementById('loginBtn');
-            const loginText = document.getElementById('loginText');
-            loginBtn.disabled = true;
-            loginText.textContent = 'Mengalihkan ke Google...';
-
-            const provider = new GoogleAuthProvider();
-            provider.setCustomParameters({ prompt: 'select_account' }); 
-            signInWithRedirect(auth, provider);
-        };
-
-        // Menangkap data login dari halaman Google
-        getRedirectResult(auth).catch((error) => {
-            console.error("Gagal memproses pengalihan masuk:", error);
-            document.getElementById('loginBtn').disabled = false;
-            document.getElementById('loginText').textContent = 'Login dengan Google';
+    // ADD SONG
+    const btnAdd = document.getElementById('btnAdd');
+    const popupAdd = document.getElementById('popupAdd');
+    const inputLink = document.getElementById('inputLink');
+    const btnBatal = document.getElementById('btnBatal');
+    const btnKirim = document.getElementById('btnKirim');
+    
+    btnAdd.onclick = () => popupAdd.classList.add('show');
+    btnBatal.onclick = () => { popupAdd.classList.remove('show'); inputLink.value = ''; }
+    popupAdd.onclick = (e) => { if(e.target === popupAdd) btnBatal.click(); }
+    
+    inputLink.oninput = () => {
+      if(inputLink.value.trim()) {
+        btnBatal.style.flex = '1';
+        btnKirim.style.display = 'block';
+      } else {
+        btnBatal.style.flex = '1';
+        btnKirim.style.display = 'none';
+      }
+    };
+    
+    btnKirim.onclick = async () => {
+      const link = inputLink.value.trim();
+      if(!link) return;
+      const tempAudio = new Audio(link);
+      tempAudio.onloadedmetadata = async () => {
+        await addDoc(collection(db, 'playlist'), {
+          url: link,
+          title: link.split('/').pop(),
+          duration: tempAudio.duration,
+          order: Date.now(),
+          created: serverTimestamp()
         });
+        inputLink.value = '';
+        btnBatal.click();
+      };
+      tempAudio.onerror = () => alert('Link tidak valid!');
+    };
 
-        // REFRESH SETELAH LOGOUT AGAR SESI BERSIH TOTAL
-        document.getElementById('logoutBtn').onclick = () => {
-            closeModal('profileModal');
-            signOut(auth).then(() => {
-                window.location.reload(); 
-            });
-        };
-        
-        document.getElementById('profileBtn').onclick = () => profileModal.classList.add('active');
-        document.getElementById('uploadBtn').onclick = () => {
-            document.getElementById('trackName').value = '';
-            document.getElementById('trackUrl').value = '';
-            uploadModal.classList.add('active');
-        };
+    // PLAYLIST
+    onSnapshot(query(collection(db, 'playlist'), orderBy('order')), (snap) => {
+      playlist = [];
+      snap.forEach(doc => playlist.push({ id: doc.id,...doc.data() }));
+      renderPlaylist();
+      updatePlayStatus();
+      if(!isPlaying && playlist.length > 0) syncRadio();
+    });
 
-        document.getElementById('addBtn').onclick = async () => {
-            if (!isAdmin) return;
-            
-            const name = document.getElementById('trackName').value.trim();
-            const url = document.getElementById('trackUrl').value.trim();
-
-            if (!name || !url) {
-                alert('Harap isi Nama Judul dan URL Audio!');
-                return;
+    function renderPlaylist() {
+      const wrap = document.getElementById('playlist');
+      wrap.innerHTML = '';
+      playlist.forEach((song, i) => {
+        const div = document.createElement('div');
+        div.className = 'song-item';
+        div.draggable = isAdmin;
+        if(i === currentIndex) div.classList.add('playing');
+        div.dataset.id = song.id;
+        div.innerHTML = `
+          <span>${song.title}</span>
+          ${i === currentIndex? '<span class="btn-check">✓</span>' : isAdmin? `<button class="btn-del" onclick="deleteSong('${song.id}')">X</button>` : ''}
+        `;
+        if(isAdmin) {
+          div.ondragstart = (e) => e.target.classList.add('dragging');
+          div.ondragend = (e) => e.target.classList.remove('dragging');
+          div.ondragover = (e) => e.preventDefault();
+          div.ondrop = async (e) => {
+            e.preventDefault();
+            const dragged = document.querySelector('.dragging');
+            const draggedId = dragged.dataset.id;
+            const targetId = e.currentTarget.dataset.id;
+            if(draggedId === targetId) return;
+            const draggedIndex = playlist.findIndex(s => s.id === draggedId);
+            const targetIndex = playlist.findIndex(s => s.id === targetId);
+            const [moved] = playlist.splice(draggedIndex, 1);
+            playlist.splice(targetIndex, 0, moved);
+            for(let j = 0; j < playlist.length; j++) {
+              await updateDoc(doc(db, 'playlist', playlist[j].id), { order: j });
             }
-
-            const addBtn = document.getElementById('addBtn');
-            addBtn.disabled = true;
-            addBtn.textContent = 'Menyimpan...';
-            
-            try {
-                await addDoc(collection(db, 'queue'), {
-                    name: name, 
-                    url: url, 
-                    uploader: currentUser.email, 
-                    timestamp: serverTimestamp()
-                });
-                
-                alert('Link audio berhasil masuk antrian!');
-                closeModal('uploadModal');
-            } catch (e) { 
-                alert('Gagal menyimpan data: ' + e.message); 
-                console.error(e);
-            }
-            
-            addBtn.disabled = false;
-            addBtn.textContent = 'Tambahkan ke Antrian';
-        };
-
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        window.closeModal = closeModal;
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                loginModal.classList.remove('active');
-                document.getElementById('profileBtn').style.display = 'flex';
-                document.getElementById('userAvatar').src = user.photoURL;
-                document.getElementById('userName').textContent = user.displayName.split(' ')[0];
-                document.getElementById('profileAvatar').src = user.photoURL;
-                document.getElementById('profileName').textContent = user.displayName;
-                document.getElementById('profileEmail').textContent = user.email;
-
-                const adminDoc = await getDoc(doc(db, 'admins', user.uid));
-                isAdmin = adminDoc.exists() && adminDoc.data().role === 'admin';
-                document.getElementById('uploadBtn').style.display = isAdmin ? 'block' : 'none';
-                
-                if (!isAdmin) {
-                    adminDebug.style.display = 'block';
-                    adminDebug.innerHTML = `UID: ${user.uid}<br>Kamu belum admin. Tambahkan UID ini ke Firestore > admins`;
-                } else {
-                    adminDebug.style.display = 'none';
-                }
-
-                const userRef = dbRef(rtdb, `listeners/${user.uid}`);
-                set(userRef, true);
-                onDisconnect(userRef).remove();
-                initPlayer();
-            } else {
-                currentUser = null;
-                isAdmin = false;
-                loginModal.classList.add('active');
-                document.getElementById('profileBtn').style.display = 'none';
-                document.getElementById('uploadBtn').style.display = 'none';
-                adminDebug.style.display = 'none';
-                audioPlayer.pause();
-                if (queueUnsubscribe) queueUnsubscribe();
-            }
-        });
-
-        // PERBAIKAN: Hitung pendengar menggunakan numChildren()
-        onValue(dbRef(rtdb, 'listeners'), (snapshot) => {
-            const count = snapshot.exists() ? snapshot.numChildren() : 0;
-            document.getElementById('listenerCount').textContent = count;
-        });
-
-        function initPlayer() {
-            const q = query(collection(db, 'queue'), orderBy('timestamp'));
-            queueUnsubscribe = onSnapshot(q, (snapshot) => {
-                localQueue = [];
-                snapshot.forEach(doc => localQueue.push({ id: doc.id, ...doc.data() }));
-                
-                document.getElementById('queueInfo').textContent = localQueue.length > 0 ? `${localQueue.length} siaran dalam antrian` : 'Antrian siaran kosong';
-                
-                if (!currentTrack && localQueue.length > 0) {
-                    playNext(localQueue[0]);
-                }
-            });
+          };
         }
+        wrap.appendChild(div);
+      });
+    }
 
-        async function playNext(track) {
-            if (!track) {
-                currentTrack = null;
-                document.getElementById('nowPlaying').textContent = 'Menunggu siaran...';
-                audioPlayer.removeAttribute('src');
-                audioPlayer.load();
-                return;
-            }
-            currentTrack = track;
-            document.getElementById('nowPlaying').textContent = `▶ ${track.name}`;
-            audioPlayer.src = track.url;
-            try { 
-                await audioPlayer.play(); 
-            } catch (e) { 
-                console.log('Autoplay ditahan browser.'); 
-            }
-        }
+    window.deleteSong = async (id) => {
+      if(confirm('Hapus permanen?')) await deleteDoc(doc(db, 'playlist', id));
+    };
 
-        // PERBAIKAN: Agar audio kedua jalan otomatis tanpa nunggu delay
-        audioPlayer.onended = async () => {
-            if (currentTrack) {
-                const finishedTrackId = currentTrack.id;
-                const currentIndex = localQueue.findIndex(t => t.id === finishedTrackId);
-                const nextTrack = localQueue[currentIndex + 1];
-                
-                deleteDoc(doc(db, 'queue', finishedTrackId)).catch(e => console.error(e));
-                
-                if (nextTrack) {
-                    playNext(nextTrack);
-                } else {
-                    currentTrack = null;
-                    document.getElementById('nowPlaying').textContent = 'Menunggu siaran...';
-                }
-            }
-        };
-
-        // PERBAIKAN: Menghapus logika penghapusan file di Firestore jika terjadi error internet
-        audioPlayer.onerror = (e) => {
-            console.log("Audio player mendeteksi interupsi jaringan.");
-        };
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) audioPlayer.pause();
-            else if (currentUser && currentTrack) audioPlayer.play().catch(() => {});
+    // RADIO SYNC
+    async function initRadio() {
+      const stateDoc = await getDocs(query(collection(db, 'radio_state')));
+      if(stateDoc.empty) {
+        await setDoc(doc(db, 'radio_state', 'current'), {
+          startTime: serverTimestamp(),
+          currentIndex: 0
         });
-        window.addEventListener('beforeunload', () => audioPlayer.pause());
-        document.addEventListener('contextmenu', (e) => { if (!isAdmin) e.preventDefault(); });
-    </script>
+      }
+      syncRadio();
+    }
+
+    function syncRadio() {
+      if(playlist.length === 0) {
+        document.getElementById('statusSiaran').textContent = 'radio sedang tidak siaran';
+        audio.pause();
+        return;
+      }
+      
+      onSnapshot(doc(db, 'radio_state', 'current'), (snap) => {
+        if(!snap.exists()) return;
+        const data = snap.data();
+        startTime = data.startTime?.toMillis() || Date.now();
+        currentIndex = data.currentIndex || 0;
+        playRadio();
+      });
+    }
+
+    function playRadio() {
+      if(playlist.length === 0) return;
+      totalDuration = playlist.reduce((sum, s) => sum + (s.duration || 0), 0);
+      const elapsed = (Date.now() - startTime) / 1000;
+      let accumulated = 0;
+      
+      for(let i = 0; i < playlist.length; i++) {
+        accumulated += playlist[i].duration || 0;
+        if(elapsed < accumulated) {
+          currentIndex = i;
+          const songOffset = elapsed - (accumulated - playlist[i].duration);
+          audio.src = playlist[i].url;
+          audio.currentTime = songOffset;
+          audio.play();
+          isPlaying = true;
+          document.getElementById('statusSiaran').textContent = 'radio sedang siaran';
+          renderPlaylist();
+          break;
+        }
+      }
+      
+      if(elapsed >= totalDuration) {
+        currentIndex = 0;
+        setDoc(doc(db, 'radio_state', 'current'), {
+          startTime: serverTimestamp(),
+          currentIndex: 0
+        });
+      }
+    }
+
+    audio.onended = () => {
+      currentIndex++;
+      if(currentIndex >= playlist.length) {
+        currentIndex = 0;
+        setDoc(doc(db, 'radio_state', 'current'), {
+          startTime: serverTimestamp(),
+          currentIndex: 0
+        });
+      } else {
+        updateDoc(doc(db, 'radio_state', 'current'), { currentIndex });
+      }
+    };
+
+    function updatePlayStatus() {
+      document.getElementById('statusPlay').textContent = playlist.length + ' play';
+    }
+
+    // CHAT
+    const chatInput = document.getElementById('chatInput');
+    const btnKirimChat = document.getElementById('btnKirimChat');
+    
+    chatInput.oninput = () => {
+      btnKirimChat.classList.toggle('show', chatInput.value.trim().length > 0);
+    };
+    
+    btnKirimChat.onclick = async () => {
+      if(!currentUser) { alert('Login dulu Mas!'); return; }
+      const msg = chatInput.value.trim();
+      if(!msg) return;
+      await addDoc(collection(db, 'chat'), {
+        user: currentUser.displayName,
+        msg: msg,
+        created: serverTimestamp()
+      });
+      chatInput.value = '';
+      btnKirimChat.classList.remove('show');
+    };
+    
+    onSnapshot(query(collection(db, 'chat'), orderBy('created', 'desc')), (snap) => {
+      const wrap = document.getElementById('chatList');
+      wrap.innerHTML = '';
+      const now = Date.now();
+      snap.forEach(doc => {
+        const data = doc.data();
+        const age = now - (data.created?.toMillis() || now);
+        if(age < 86400000) { // 24 jam
+          const div = document.createElement('div');
+          div.className = 'chat-item';
+          div.innerHTML = `<span class="user">${data.user}</span> <span class="msg">${data.msg}</span>`;
+          wrap.appendChild(div);
+        }
+      });
+    });
+
+    // AUTO STOP
+    window.onbeforeunload = () => {
+      if(currentUser) set(ref(rtdb, 'listeners/' + currentUser.uid), null);
+    };
+  </script>
 </body>
-  </html>
+    </html>
