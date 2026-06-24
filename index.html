@@ -1,394 +1,371 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radio Suara Besuki FM 102.5</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background: #000; color: #fff; overflow-x: hidden; }
-    
-    /* HEADER */
- .header { position: fixed; top: 0; width: 100%; padding: 10px 15px; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
- .btn-add { width: 35px; height: 35px; background: #808080; border-radius: 50%; border: none; color: #000; font-size: 24px; cursor: pointer; display: none; line-height: 35px; text-align: center; }
- .btn-add.show { display: block; }
- .profile-circle { width: 35px; height: 35px; background: #000; border: 2px solid #333; border-radius: 50%; cursor: pointer; background-size: cover; background-position: center; }
-    
-    /* INFO BOX */
- .container { padding-top: 60px; max-width: 600px; margin: 0 auto; }
- .info-box { background: #D2B48C; margin: 10px; padding: 15px; border-radius: 8px; text-align: center; }
- .info-box h1 { color: #fff; font-size: 18px; margin-bottom: 5px; font-weight: normal; }
- .info-box h2 { color: #FFFF00; font-size: 16px; margin-bottom: 5px; font-weight: normal; }
- .info-box.freq { color: #00FF00; font-size: 14px; margin-bottom: 5px; }
- .info-box.freq span { color: #808080; }
- .info-box.city { color: #FF0000; font-size: 14px; margin-bottom: 5px; }
- .info-box.tagline { color: #0000FF; font-size: 14px; }
- .status-box { background: #8B4513; margin-top: 15px; padding: 10px; border-radius: 6px; }
- .status-box.row { padding: 5px; font-size: 14px; text-align: center; }
- .status-box.row.red { color: #FF0000; }
- .status-box.row.yellow { color: #FFFF00; }
- .status-box.row.green { color: #00FF00; }
- .dot-kedip { width: 8px; height: 8px; background: #00FF00; border-radius: 50%; display: inline-block; margin-right: 5px; animation: kedip 1s infinite; }
-    @keyframes kedip { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.3; } }
-    
-    /* LIVE CHAT */
- .chat-input-wrap { margin: 10px; position: relative; }
- .chat-input { width: 100%; background: #000; border: 2px solid #FF69B4; border-radius: 20px; padding: 10px 15px; color: #fff; font-size: 14px; }
- .chat-input::placeholder { color: #808080; }
- .btn-kirim-chat { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: #FFA500; border: none; padding: 6px 15px; border-radius: 15px; color: #000; font-weight: bold; cursor: pointer; display: none; }
- .btn-kirim-chat.show { display: block; }
-    
-    /* PLAYLIST */
- .playlist { margin: 10px; }
- .song-item { background: #111; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 13px; cursor: move; }
- .song-item.playing { border: 2px solid #808080; }
- .song-item.btn-del { background: #FF0000; border: none; width: 25px; height: 25px; border-radius: 3px; color: #fff; cursor: pointer; font-weight: bold; }
- .song-item.btn-check { color: #00FF00; font-size: 20px; }
- .song-item.dragging { opacity: 0.5; }
-    
-    /* CHAT LIST */
- .chat-list { margin: 10px; }
- .chat-item { margin-bottom: 8px; font-size: 14px; }
- .chat-item.user { color: #00FF00; font-weight: bold; }
- .chat-item.msg { color: #fff; }
-    
-    /* POPUP */
- .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
- .popup.show { display: flex; }
- .popup-content { background: #000; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
- .popup-login.btn-google { background: #fff; color: #000; padding: 12px; border: none; border-radius: 5px; width: 100%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
- .popup-login.profile-info { text-align: center; }
- .popup-login.profile-info img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; }
- .popup-login.profile-info.username { color: #808080; margin-bottom: 5px; }
- .popup-login.profile-info.email { color: #808080; margin-bottom: 5px; }
- .popup-login.profile-info.created { color: #808080; margin-bottom: 15px; }
- .popup-login.btn-logout { background: #808080; color: #fff; padding: 12px; border: none; border-radius: 5px; width: 100%; cursor: pointer; }
- .popup-add input { width: 100%; background: #000; border: 2px solid #FFFF00; border-radius: 10px; padding: 12px; color: #fff; margin-bottom: 15px; }
- .popup-add input::placeholder { color: #808080; }
- .popup-add.btn-wrap { display: flex; gap: 10px; }
- .popup-add.btn-wrap button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
- .btn-batal { background: #808080; color: #fff; }
- .btn-kirim { background: #FF0000; color: #fff; }
-    
-    /* PLAY BUTTON */
- .play-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
- .play-overlay.hide { display: none; }
- .play-overlay button { background: #00FF00; color: #000; border: none; padding: 20px 40px; font-size: 20px; font-weight: bold; border-radius: 10px; cursor: pointer; }
- .play-overlay p { color: #808080; margin-top: 15px; font-size: 14px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoPlayer Playlist Online</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        background-color: #000;
+        color: #fff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .header-box {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        position: sticky;
+        top: 20px;
+        z-index: 10;
+    }
+    input[type="url"] {
+        flex: 1;
+        padding: 12px 15px;
+        background-color: #222;
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    input[type="url"]:focus {
+        border-color: #007bff;
+    }
+    button.kirim {
+        padding: 12px 25px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+    button.kirim:hover {
+        background-color: #0056b3;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        background-color: #151515;
+        margin-bottom: 10px;
+        padding: 15px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: grab;
+        border: 1px solid #333;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+    li:active {
+        cursor: grabbing;
+    }
+    li.playing {
+        border-color: #0f0;
+        background-color: #1a251a;
+    }
+    li.dragging {
+        opacity: 0.4;
+        background-color: #333;
+    }
+    .link-text {
+        flex: 1;
+        margin-right: 15px;
+        font-size: 14px;
+        word-break: break-all;
+        pointer-events: none;
+    }
+    .icon {
+        font-size: 18px;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .check {
+        color: #0f0;
+        cursor: default;
+    }
+    .cross {
+        color: #ff4d4d;
+        cursor: pointer;
+        padding: 5px;
+        transition: transform 0.2s;
+    }
+    .cross:hover {
+        transform: scale(1.3);
+    }
+    #alertBox {
+        display: none;
+        background-color: #ff9800;
+        color: #fff;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+    }
+</style>
 </head>
 <body>
-  <div class="play-overlay" id="playOverlay">
-    <button id="btnPlayStart">KETUK UNTUK DENGERIN</button>
-    <p>Tap 1x untuk mulai radio</p>
-  </div>
 
-  <div class="header">
-    <button class="btn-add" id="btnAdd">+</button>
-    <div class="profile-circle" id="profileBtn"></div>
-  </div>
+<div class="header-box">
+    <input type="url" id="linkInput" placeholder="Tempel link audio .mp3 di sini..." autocomplete="off">
+    <button class="kirim" onclick="addLink()">Kirim</button>
+</div>
 
-  <div class="container">
-    <div class="info-box">
-      <h1>Radio</h1>
-      <h2>Suara Besuki FM</h2>
-      <div class="freq">102.5 <span>Mhz</span></div>
-      <div class="city">Tulungagung</div>
-      <div class="tagline">Cahaya dari Selatan</div>
-      <div class="status-box">
-        <div class="row red" id="statusSiaran">radio sedang tidak siaran</div>
-        <div class="row yellow" id="statusPlay">0 play</div>
-        <div class="row green"><span class="dot-kedip"></span><span id="statusPendengar">0 pendengar</span></div>
-      </div>
-    </div>
+<div id="alertBox" onclick="resumeAudio()">
+    ⚠️ Browser memblokir Auto-play awal. Klik di sini untuk memutar audio!
+</div>
 
-    <div class="chat-input-wrap">
-      <input type="text" class="chat-input" id="chatInput" placeholder="live chat" maxlength="100">
-      <button class="btn-kirim-chat" id="btnKirimChat">kirim</button>
-    </div>
+<ul id="playlistContainer"></ul>
 
-    <div class="playlist" id="playlist"></div>
-    <div class="chat-list" id="chatList"></div>
-  </div>
-
-  <!-- POPUP LOGIN -->
-  <div class="popup popup-login" id="popupLogin">
-    <div class="popup-content" id="loginContent"></div>
-  </div>
-
-  <!-- POPUP ADD -->
-  <div class="popup popup-add" id="popupAdd">
-    <div class="popup-content">
-      <input type="text" id="inputLink" placeholder="link">
-      <div class="btn-wrap">
-        <button class="btn-batal" id="btnBatal">batal</button>
-        <button class="btn-kirim" id="btnKirim" style="display:none;">kirim</button>
-      </div>
-    </div>
-  </div>
-
-  <audio id="audioPlayer"></audio>
-
-  <script type="module">
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, serverTimestamp, getDocs, setDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-    import { getDatabase, ref, onValue, set, onDisconnect } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDrEQ7GcPPo8CbqF0_dRwDlXSXbz1FsmPs",
-      authDomain: "hahahihi-5084e.firebaseapp.com",
-      databaseURL: "https://hahahihi-5084e-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "hahahihi-5084e",
-      storageBucket: "hahahihi-5084e.firebasestorage.app",
-      messagingSenderId: "691544964510",
-      appId: "1:691544964510:web:561a1aed05c8a8f5ff6a8f"
+        apiKey: "AIzaSyDrEQ7GcPPo8CbqF0_dRwDlXSXbz1FsmPs",
+        authDomain: "hahahihi-5084e.firebaseapp.com",
+        databaseURL: "https://hahahihi-5084e-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "hahahihi-5084e",
+        storageBucket: "hahahihi-5084e.firebasestorage.app",
+        messagingSenderId: "691544964510",
+        appId: "1:691544964510:web:561a1aed05c8a8f5ff6a8f"
     };
 
-    const ADMIN_UID = "hz3aHzi9GwMGqwwBtxdU1dA4r9e2";
-    
+    // Inisialisasi Firebase & Database
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const rtdb = getDatabase(app);
-    
-    let currentUser = null;
-    let isAdmin = false;
+    const db = getDatabase(app);
+    const dbRef = ref(db, 'playerState'); // Folder database yang kita gunakan
+
     let playlist = [];
     let currentIndex = 0;
-    let audio = document.getElementById('audioPlayer');
-    let startTime = null;
-    let isPlaying = false;
-
-    document.getElementById('btnPlayStart').onclick = () => {
-      document.getElementById('playOverlay').classList.add('hide');
-      initRadio();
-    };
-
-    const profileBtn = document.getElementById('profileBtn');
-    const popupLogin = document.getElementById('popupLogin');
-    const loginContent = document.getElementById('loginContent');
+    let isInitialized = false; // Mencegah pemutaran berulang saat sinkronisasi awal
     
-    profileBtn.onclick = () => popupLogin.classList.add('show');
-    popupLogin.onclick = (e) => { if(e.target === popupLogin) popupLogin.classList.remove('show'); }
+    const audio = new Audio();
+    const container = document.getElementById('playlistContainer');
+    const alertBox = document.getElementById('alertBox');
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      isAdmin = user && user.uid === ADMIN_UID;
-      document.getElementById('btnAdd').classList.toggle('show', isAdmin);
-      if(user) {
-        profileBtn.style.backgroundImage = `url(${user.photoURL})`;
-        loginContent.innerHTML = `
-          <div class="profile-info">
-            <img src="${user.photoURL}">
-            <div class="username">${user.displayName}</div>
-            <div class="email">${user.email}</div>
-            <div class="created">dibuat ${new Date(user.metadata.creationTime).toLocaleDateString('id-ID')}</div>
-            <button class="btn-logout" id="btnLogout">Log Out</button>
-          </div>
-        `;
-        document.getElementById('btnLogout').onclick = () => signOut(auth);
-        const myRef = ref(rtdb, 'listeners/' + user.uid);
-        set(myRef, true);
-        onDisconnect(myRef).remove();
-      } else {
-        profileBtn.style.backgroundImage = '';
-        loginContent.innerHTML = `<button class="btn-google" id="btnGoogle"><span style="font-size:20px;font-weight:bold;">G</span> Google</button>`;
-        document.getElementById('btnGoogle').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-      }
+    // Autoplay antrean selanjutnya & Looping
+    audio.addEventListener('ended', () => {
+        currentIndex++;
+        if (currentIndex >= playlist.length) {
+            currentIndex = 0;
+        }
+        saveData(); // Simpan ke database, onValue akan otomatis men-trigger pemutaran
     });
 
-    onValue(ref(rtdb, 'listeners'), (snap) => {
-      document.getElementById('statusPendengar').textContent = (snap.size || 0) + ' pendengar';
-    });
+    // Sinkronisasi Real-Time dengan Firebase
+    onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        const prevPlayingId = playlist[currentIndex]?.id;
 
-    const btnAdd = document.getElementById('btnAdd');
-    const popupAdd = document.getElementById('popupAdd');
-    const inputLink = document.getElementById('inputLink');
-    const btnBatal = document.getElementById('btnBatal');
-    const btnKirim = document.getElementById('btnKirim');
-    
-    btnAdd.onclick = () => popupAdd.classList.add('show');
-    btnBatal.onclick = () => { popupAdd.classList.remove('show'); inputLink.value = ''; btnKirim.style.display = 'none'; }
-    popupAdd.onclick = (e) => { if(e.target === popupAdd) btnBatal.click(); }
-    
-    inputLink.oninput = () => {
-      btnKirim.style.display = inputLink.value.trim()? 'block' : 'none';
-    };
-    
-    btnKirim.onclick = async () => {
-      const link = inputLink.value.trim();
-      if(!link) return;
-      const tempAudio = new Audio(link);
-      tempAudio.onloadedmetadata = async () => {
-        await addDoc(collection(db, 'playlist'), {
-          url: link,
-          title: link.split('/').pop().substring(0,30),
-          duration: tempAudio.duration,
-          order: Date.now(),
-          created: serverTimestamp()
-        });
-        inputLink.value = '';
-        btnBatal.click();
-      };
-      tempAudio.onerror = () => alert('Link tidak valid!');
-    };
+        if (data) {
+            playlist = data.playlist || [];
+            currentIndex = data.currentIndex || 0;
+        } else {
+            playlist = [];
+            currentIndex = 0;
+        }
 
-    onSnapshot(query(collection(db, 'playlist'), orderBy('order')), (snap) => {
-      playlist = [];
-      snap.forEach(doc => playlist.push({ id: doc.id,...doc.data() }));
-      renderPlaylist();
-      document.getElementById('statusPlay').textContent = playlist.length + ' play';
-      if(!isPlaying && playlist.length > 0) syncRadio();
-      else if(playlist.length === 0) document.getElementById('statusSiaran').textContent = 'radio sedang tidak siaran';
-    });
+        renderList();
 
-    function renderPlaylist() {
-      const wrap = document.getElementById('playlist');
-      wrap.innerHTML = '';
-      playlist.forEach((song, i) => {
-        const div = document.createElement('div');
-        div.className = 'song-item';
-        div.draggable = isAdmin;
-        if(i === currentIndex) div.classList.add('playing');
-        div.dataset.id = song.id;
-        div.innerHTML = `
-          <span>${song.title}</span>
-          ${i === currentIndex? '<span class="btn-check">✓</span>' : isAdmin? `<button class="btn-del" onclick="deleteSong('${song.id}')">X</button>` : ''}
-        `;
-        if(isAdmin) {
-          div.ondragstart = (e) => e.target.classList.add('dragging');
-          div.ondragend = (e) => e.target.classList.remove('dragging');
-          div.ondragover = (e) => e.preventDefault();
-          div.ondrop = async (e) => {
-            e.preventDefault();
-            const dragged = document.querySelector('.dragging');
-            const draggedId = dragged.dataset.id;
-            const targetId = e.currentTarget.dataset.id;
-            if(draggedId === targetId) return;
-            const draggedIndex = playlist.findIndex(s => s.id === draggedId);
-            const targetIndex = playlist.findIndex(s => s.id === targetId);
-            const [moved] = playlist.splice(draggedIndex, 1);
-            playlist.splice(targetIndex, 0, moved);
-            for(let j = 0; j < playlist.length; j++) {
-              await updateDoc(doc(db, 'playlist', playlist[j].id), { order: j });
+        const newPlayingId = playlist[currentIndex]?.id;
+
+        // Cek apakah ada lagu dan apakah harus mulai memutar
+        if (playlist.length > 0) {
+            if (prevPlayingId !== newPlayingId || !isInitialized) {
+                playCurrent();
             }
-          };
+        } else {
+            audio.pause();
         }
-        wrap.appendChild(div);
-      });
-    }
-
-    window.deleteSong = async (id) => {
-      if(confirm('Hapus permanen?')) await deleteDoc(doc(db, 'playlist', id));
-    };
-
-    async function initRadio() {
-      const stateDoc = await getDocs(query(collection(db, 'radio_state')));
-      if(stateDoc.empty) {
-        await setDoc(doc(db, 'radio_state', 'current'), {
-          startTime: serverTimestamp(),
-          currentIndex: 0
-        });
-      }
-      syncRadio();
-    }
-
-    function syncRadio() {
-      if(playlist.length === 0) {
-        document.getElementById('statusSiaran').textContent = 'radio sedang tidak siaran';
-        audio.pause();
-        return;
-      }
-      onSnapshot(doc(db, 'radio_state', 'current'), (snap) => {
-        if(!snap.exists()) return;
-        const data = snap.data();
-        startTime = data.startTime?.toMillis() || Date.now();
-        currentIndex = data.currentIndex || 0;
-        playRadio();
-      });
-    }
-
-    function playRadio() {
-      if(playlist.length === 0) return;
-      const totalDuration = playlist.reduce((sum, s) => sum + (s.duration || 0), 0);
-      const elapsed = (Date.now() - startTime) / 1000;
-      let accumulated = 0;
-      
-      for(let i = 0; i < playlist.length; i++) {
-        accumulated += playlist[i].duration || 0;
-        if(elapsed < accumulated) {
-          currentIndex = i;
-          const songOffset = elapsed - (accumulated - playlist[i].duration);
-          audio.src = playlist[i].url;
-          audio.currentTime = songOffset;
-          audio.play().catch(()=>{});
-          isPlaying = true;
-          document.getElementById('statusSiaran').textContent = 'radio sedang siaran';
-          renderPlaylist();
-          return;
-        }
-      }
-      
-      if(elapsed >= totalDuration) {
-        setDoc(doc(db, 'radio_state', 'current'), {
-          startTime: serverTimestamp(),
-          currentIndex: 0
-        });
-      }
-    }
-
-    audio.onended = () => {
-      currentIndex++;
-      if(currentIndex >= playlist.length) {
-        setDoc(doc(db, 'radio_state', 'current'), {
-          startTime: serverTimestamp(),
-          currentIndex: 0
-        });
-      } else {
-        updateDoc(doc(db, 'radio_state', 'current'), { currentIndex });
-      }
-    };
-
-    const chatInput = document.getElementById('chatInput');
-    const btnKirimChat = document.getElementById('btnKirimChat');
-    
-    chatInput.oninput = () => {
-      btnKirimChat.classList.toggle('show', chatInput.value.trim().length > 0);
-    };
-    
-    btnKirimChat.onclick = async () => {
-      if(!currentUser) { alert('Login dulu Mas!'); return; }
-      const msg = chatInput.value.trim();
-      if(!msg) return;
-      await addDoc(collection(db, 'chat'), {
-        user: currentUser.displayName,
-        msg: msg,
-        created: serverTimestamp()
-      });
-      chatInput.value = '';
-      btnKirimChat.classList.remove('show');
-    };
-    
-    onSnapshot(query(collection(db, 'chat'), orderBy('created', 'desc')), (snap) => {
-      const wrap = document.getElementById('chatList');
-      wrap.innerHTML = '';
-      const now = Date.now();
-      snap.forEach(doc => {
-        const data = doc.data();
-        const age = now - (data.created?.toMillis() || now);
-        if(age < 86400000) {
-          const div = document.createElement('div');
-          div.className = 'chat-item';
-          div.innerHTML = `<span class="user">${data.user}</span> <span class="msg">${data.msg}</span>`;
-          wrap.appendChild(div);
-        }
-      });
+        isInitialized = true;
     });
 
-    window.onbeforeunload = () => {
-      if(currentUser) set(ref(rtdb, 'listeners/' + currentUser.uid), null);
+    // Fungsi menyimpan ke Firebase Database
+    function saveData() {
+        set(dbRef, {
+            playlist: playlist,
+            currentIndex: currentIndex
+        });
+    }
+
+    // Karena memakai type="module", kita daftarkan fungsi ke 'window' agar bisa dipanggil dari elemen HTML
+    window.addLink = function() {
+        const input = document.getElementById('linkInput');
+        const url = input.value.trim();
+        if (!url) return;
+
+        playlist.push({ url: url, id: Date.now() });
+        
+        // Jika list sebelumnya kosong, jadikan index lagu ini yang utama
+        if (playlist.length === 1) {
+            currentIndex = 0;
+        }
+        
+        saveData(); // Sinkronisasi ke Firebase
+        input.value = '';
     };
-  </script>
+
+    window.deleteLink = function(id) {
+        const index = playlist.findIndex(p => p.id === id);
+        if (index === -1) return;
+
+        playlist.splice(index, 1);
+        
+        if (index < currentIndex) {
+            currentIndex--; 
+        }
+        
+        saveData();
+    };
+
+    window.resumeAudio = function() {
+        audio.play().then(() => {
+            alertBox.style.display = 'none';
+            renderList();
+        });
+    };
+
+    // Fungsi Putar Audio
+    function playCurrent() {
+        if (playlist.length === 0) {
+            audio.pause();
+            return;
+        }
+        
+        if (currentIndex >= playlist.length) currentIndex = 0;
+
+        const targetUrl = playlist[currentIndex].url;
+
+        // Mencegah audio mengulang dari detik 0 apabila yang disinkronisasi adalah lagu yang sama
+        if (audio.src === targetUrl && !audio.paused) {
+            return; 
+        }
+
+        audio.src = targetUrl;
+        const playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                alertBox.style.display = 'none';
+                renderList();
+            }).catch(error => {
+                console.warn("Autoplay terblokir browser:", error);
+                alertBox.style.display = 'block';
+                renderList();
+            });
+        }
+    }
+
+    // Menampilkan Antrean ke Layar
+    function renderList() {
+        container.innerHTML = '';
+        const currentId = playlist[currentIndex]?.id;
+
+        playlist.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.draggable = true; 
+            li.dataset.id = item.id;
+
+            const isPlaying = (item.id === currentId);
+            
+            if (isPlaying) {
+                li.classList.add('playing');
+            }
+
+            li.innerHTML = `
+                <div class="link-text">${item.url}</div>
+                <div class="icon">
+                    ${isPlaying 
+                        ? '<span class="check" title="Now Playing">✅</span>' 
+                        : \`<span class="cross" onclick="deleteLink(\${item.id})" title="Hapus Permanen">❌</span>\`}
+                </div>
+            `;
+
+            // Event Listener Drag and Drop
+            li.addEventListener('dragstart', handleDragStart);
+            li.addEventListener('dragover', handleDragOver);
+            li.addEventListener('drop', handleDrop);
+            li.addEventListener('dragend', handleDragEnd);
+
+            container.appendChild(li);
+        });
+    }
+
+    // Fitur Setting Urutan Tampil (Drag & Drop)
+    let dragEl = null;
+
+    function handleDragStart(e) {
+        if (e.target.classList.contains('cross')) return; 
+        dragEl = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+        setTimeout(() => this.classList.add('dragging'), 0);
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (dragEl && dragEl !== this) {
+            const bounding = this.getBoundingClientRect();
+            const offset = e.clientY - bounding.top;
+            if (offset > bounding.height / 2) {
+                this.after(dragEl); 
+            } else {
+                this.before(dragEl); 
+            }
+        }
+        return false;
+    }
+
+    function handleDrop(e) {
+        e.stopPropagation();
+        updateArrayFromDOM();
+        return false;
+    }
+
+    function handleDragEnd(e) {
+        this.classList.remove('dragging');
+    }
+
+    function updateArrayFromDOM() {
+        const items = [...container.querySelectorAll('li')];
+        let newPlaylist = [];
+        let newCurrentIndex = currentIndex;
+        const playingId = playlist[currentIndex]?.id;
+
+        items.forEach((item, i) => {
+            const id = parseInt(item.dataset.id);
+            const track = playlist.find(p => p.id === id);
+            if (track) newPlaylist.push(track);
+            
+            // Perbarui currentIndex jika posisi lagu yang diputar bergeser
+            if (track && track.id === playingId) {
+                newCurrentIndex = i;
+            }
+        });
+
+        playlist = newPlaylist;
+        currentIndex = newCurrentIndex; 
+        saveData(); // Sebar urutan baru ke seluruh perangkat via Firebase
+    }
+</script>
 </body>
-  </html>
+</html>
