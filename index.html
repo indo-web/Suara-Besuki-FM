@@ -3,1605 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Stream - Live Audio Broadcasting</title>
-    
-    <!-- Firebase SDK CDN Links -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
-    
+    <title>Radio Stream</title>
     <style>
-        /* ============================================
-           CSS RESET & BASE STYLES
-           ============================================ */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --dark-bg: #0f0f1a;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.7);
-            --accent-color: #667eea;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            background: var(--dark-bg);
-            color: var(--text-primary);
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ============================================
-           BACKGROUND ANIMATION
-           ============================================ */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .bg-animation::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 40%, rgba(240, 147, 251, 0.1) 0%, transparent 40%);
-            animation: bgPulse 15s ease-in-out infinite;
-        }
-
-        @keyframes bgPulse {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(2%, 2%) rotate(1deg); }
-            66% { transform: translate(-1%, 1%) rotate(-1deg); }
-        }
-
-        /* ============================================
-           HEADER STYLES
-           ============================================ */
-        header {
             padding: 2rem;
-            text-align: center;
-            position: relative;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-gradient);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        /* ============================================
-           NOW PLAYING BAR
-           ============================================ */
-        .now-playing-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 15, 26, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--card-border);
-            padding: 1rem 2rem;
-            display: none;
-            align-items: center;
-            gap: 1.5rem;
-            z-index: 100;
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .now-playing-bar.active {
-            display: flex;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .visualizer-container {
-            width: 50px;
-            height: 40px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 3px;
-        }
-
-        .visualizer-bar {
-            width: 4px;
-            background: var(--primary-gradient);
-            border-radius: 2px;
-            transition: height 0.1s ease;
-        }
-
-        .now-playing-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .now-playing-title {
-            font-weight: 600;
-            font-size: 1rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .now-playing-genre {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .now-playing-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .play-pause-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .play-pause-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .volume-icon {
-            cursor: pointer;
-            padding: 0.5rem;
-            transition: var(--transition);
-            font-size: 1.2rem;
-        }
-
-        .volume-icon:hover {
-            color: var(--accent-color);
-        }
-
-        .volume-slider {
-            width: 100px;
-            height: 4px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            cursor: pointer;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        /* ============================================
-           MAIN CONTENT AREA
-           ============================================ */
-        main {
-            padding: 2rem;
-            padding-bottom: 120px;
-            max-width: 1400px;
+        .container {
+            max-width: 600px;
             margin: 0 auto;
         }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .station-count {
-            background: var(--card-bg);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        /* ============================================
-           RADIO STATIONS GRID
-           ============================================ */
-        .stations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .station-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
+        .station {
+            background: rgba(255,255,255,0.1);
             border-radius: 16px;
-            padding: 1.5rem;
-            transition: var(--transition);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
 
-        .station-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--primary-gradient);
-            opacity: 0;
-            transition: var(--transition);
+        .station:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
         }
 
-        .station-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-color);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .station-card:hover::before {
-            opacity: 1;
-        }
-
-        .station-card.playing {
-            border-color: var(--success-color);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .station-card.playing::before {
-            opacity: 1;
-            background: linear-gradient(90deg, var(--success-color), #34d399);
+        .station.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
         }
 
         .station-header {
             display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .station-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            object-fit: cover;
-            background: var(--card-bg);
-            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-        }
-
-        .station-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .station-info {
-            flex: 1;
-            min-width: 0;
         }
 
         .station-name {
+            font-weight: 600;
             font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .station-genre {
+            color: #888;
             font-size: 0.85rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
         }
 
-        .station-badge {
-            background: var(--primary-gradient);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .station-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.75rem;
-            color: var(--success-color);
-            margin-top: 0.5rem;
-        }
-
-        .station-status::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--success-color);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .station-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--card-border);
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 0.7rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-
-        .play-btn {
-            background: var(--primary-gradient);
-            color: white;
-        }
-
-        .play-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .delete-btn {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error-color);
-        }
-
-        .delete-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        /* ============================================
-           FLOATING ACTION BUTTON
-           ============================================ */
-        .fab {
-            position: fixed;
-            bottom: 100px;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
-            transition: var(--transition);
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .fab:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.7);
-        }
-
-        /* ============================================
-           MODAL STYLES
-           ============================================ */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 1rem;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal {
-            background: #1a1a2e;
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            padding: 2rem;
-            animation: modalSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes modalSlide {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .close-btn {
+        .play-icon {
             width: 40px;
             height: 40px;
-            border-radius: 10px;
-            background: var(--card-bg);
-            border: none;
-            color: var(--text-secondary);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.2rem;
-            cursor: pointer;
-            transition: var(--transition);
         }
 
-        .close-btn:hover {
-            background: var(--error-color);
-            color: white;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.9rem 1rem;
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            background: var(--card-bg);
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            background: var(--primary-gradient);
-            color: white;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
+        /* Player Bar */
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 26, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: none;
             align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            gap: 1rem;
         }
 
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-        }
+        .player-bar.active { display: flex; }
 
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .player-info { flex: 1; }
+        
+        .player-title { font-weight: 600; }
+        .player-status { font-size: 0.8rem; color: #888; }
 
-        /* ============================================
-           EMPTY STATE
-           ============================================ */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .empty-text {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        /* ============================================
-           LOADING SPINNER
-           ============================================ */
-        .loading-spinner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem;
-        }
-
-        .spinner {
+        .player-btn {
             width: 50px;
             height: 50px;
-            border: 3px solid var(--card-border);
-            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .volume-slider {
+            width: 80px;
+            accent-color: #667eea;
+        }
+
+        /* Loading indicator */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+        }
+
+        .loader {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #333;
+            border-top-color: #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ============================================
-           TOAST NOTIFICATIONS
-           ============================================ */
-        .toast-container {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 300;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .toast {
-            background: #1a1a2e;
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            animation: toastSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            max-width: 350px;
-        }
-
-        @keyframes toastSlide {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .toast.success {
-            border-color: var(--success-color);
-        }
-
-        .toast.error {
-            border-color: var(--error-color);
-        }
-
-        .toast-icon {
-            font-size: 1.2rem;
-        }
-
-        .toast-message {
-            font-size: 0.9rem;
-        }
-
-        /* ============================================
-           FIREBASE STATUS INDICATOR
-           ============================================ */
-        .firebase-status {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--card-bg);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            border: 1px solid var(--card-border);
-            z-index: 50;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--error-color);
-            transition: var(--transition);
-        }
-
-        .status-dot.connected {
-            background: var(--success-color);
-        }
-
-        /* ============================================
-           RESPONSIVE DESIGN
-           ============================================ */
-        @media (max-width: 768px) {
-            header {
-                padding: 1.5rem 1rem;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .logo-icon {
-                width: 50px;
-                height: 50px;
-            }
-
-            main {
-                padding: 1rem;
-                padding-bottom: 140px;
-            }
-
-            .stations-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .now-playing-bar {
-                padding: 0.8rem 1rem;
-                gap: 1rem;
-            }
-
-            .volume-slider {
-                width: 70px;
-            }
-
-            .fab {
-                bottom: 90px;
-                right: 1rem;
-                width: 55px;
-                height: 55px;
-            }
-
-            .modal {
-                padding: 1.5rem;
-                margin: 1rem;
-            }
-
-            .toast-container {
-                left: 1rem;
-                right: 1rem;
-            }
-
-            .toast {
-                max-width: none;
-            }
-
-            .firebase-status {
-                top: 0.5rem;
-                left: 0.5rem;
-                padding: 0.4rem 0.8rem;
-            }
-        }
-
-        /* ============================================
-           SCROLLBAR STYLING
-           ============================================ */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--dark-bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--card-border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-color);
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <!-- Background Animation -->
-    <div class="bg-animation"></div>
-
-    <!-- Firebase Status Indicator -->
-    <div class="firebase-status" id="firebaseStatus">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">Connecting...</span>
+    <div class="container">
+        <h1>📻 Radio Stream</h1>
+        <div id="stations"></div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- Header -->
-    <header>
-        <div class="logo-container">
-            <div class="logo-icon">📻</div>
-            <h1>Radio Stream</h1>
+    <!-- Player Bar -->
+    <div class="player-bar" id="playerBar">
+        <div class="player-info">
+            <div class="player-title" id="nowTitle">-</div>
+            <div class="player-status" id="nowStatus">Stopped</div>
         </div>
-        <p class="subtitle">Dengarkan radio streaming dari seluruh dunia</p>
-    </header>
-
-    <!-- Main Content -->
-    <main>
-        <div class="section-header">
-            <div class="section-title">
-                <span>🎵</span>
-                Radio Stations
-                <span class="station-count" id="stationCount">0 stations</span>
-            </div>
-        </div>
-
-        <!-- Loading State -->
-        <div class="loading-spinner" id="loadingSpinner">
-            <div class="spinner"></div>
-        </div>
-
-        <!-- Stations Grid -->
-        <div class="stations-grid" id="stationsGrid" style="display: none;">
-            <!-- Station cards will be dynamically inserted here -->
-        </div>
-
-        <!-- Empty State -->
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <div class="empty-icon">📻</div>
-            <h3 class="empty-title">Belum Ada Radio Station</h3>
-            <p class="empty-text">Jadilah orang pertama yang menambahkan station radio! Klik tombol + di bawah untuk memulai.</p>
-        </div>
-    </main>
-
-    <!-- Floating Action Button -->
-    <button class="fab" id="addStationFab" title="Tambah Radio Station">➕</button>
-
-    <!-- Now Playing Bar -->
-    <div class="now-playing-bar" id="nowPlayingBar">
-        <div class="visualizer-container" id="visualizer">
-            <div class="visualizer-bar" style="height: 10px;"></div>
-            <div class="visualizer-bar" style="height: 20px;"></div>
-            <div class="visualizer-bar" style="height: 15px;"></div>
-            <div class="visualizer-bar" style="height: 25px;"></div>
-            <div class="visualizer-bar" style="height: 18px;"></div>
-            <div class="visualizer-bar" style="height: 22px;"></div>
-            <div class="visualizer-bar" style="height: 12px;"></div>
-            <div class="visualizer-bar" style="height: 28px;"></div>
-        </div>
-        <div class="now-playing-info">
-            <div class="now-playing-title" id="nowPlayingTitle">Tidak Sedang Memutar</div>
-            <div class="now-playing-genre" id="nowPlayingGenre">Pilih station untuk memulai</div>
-        </div>
-        <div class="now-playing-controls">
-            <button class="play-pause-btn" id="playPauseBtn">▶</button>
-            <div class="volume-control">
-                <span class="volume-icon" id="volumeIcon">🔊</span>
-                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Station Modal -->
-    <div class="modal-overlay" id="addModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">🎙️ Tambah Radio Station</h2>
-                <button class="close-btn" id="closeModalBtn">✕</button>
-            </div>
-            <form id="addStationForm">
-                <div class="form-group">
-                    <label class="form-label" for="stationName">Nama Station *</label>
-                    <input type="text" class="form-input" id="stationName" placeholder="Contoh: Jazz FM Indonesia" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="streamUrl">URL Stream *</label>
-                    <input type="url" class="form-input" id="streamUrl" placeholder="Contoh: https://stream.example.com/live" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="genre">Genre</label>
-                    <input type="text" class="form-input" id="genre" placeholder="Contoh: Jazz, Pop, Rock, dll">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="logoUrl">URL Logo (opsional)</label>
-                    <input type="url" class="form-input" id="logoUrl" placeholder="Contoh: https://example.com/logo.png">
-                </div>
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    <span>➕</span>
-                    Tambah Station
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal-overlay" id="deleteModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 class="modal-title">⚠️ Hapus Station</h2>
-                <button class="close-btn" id="closeDeleteModalBtn">✕</button>
-            </div>
-            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Apakah Anda yakin ingin menghapus "<span id="deleteStationName"></span>"? Tindakan ini tidak dapat dibatalkan.</p>
-            <div style="display: flex; gap: 1rem;">
-                <button class="action-btn delete-btn" style="flex: 1;" id="confirmDeleteBtn">Hapus</button>
-                <button class="action-btn play-btn" style="flex: 1;" id="cancelDeleteBtn">Batal</button>
-            </div>
-        </div>
+        <button class="player-btn" id="playBtn">▶</button>
+        <input type="range" class="volume-slider" id="volume" min="0" max="100" value="70">
     </div>
 
     <script>
-        // ============================================
-        // FIREBASE CONFIGURATION - SUDAH DIISI DENGAN CONFIG ANDA
-        // ============================================
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyDrEQ7GcPPo8CbqF0_dRwDlXSXbz1FsmPs",
-            authDomain: "hahahihi-5084e.firebaseapp.com",
-            databaseURL: "https://hahahihi-5084e-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "hahahihi-5084e",
-            storageBucket: "hahahihi-5084e.firebasestorage.app",
-            messagingSenderId: "691544964510",
-            appId: "1:691544964510:web:561a1aed05c8a8f5ff6a8f"
-        };
-
-        // Initialize Firebase
-        let database;
-        let firebaseConnected = false;
-
-        try {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            console.log('✅ Firebase initialized successfully');
-            firebaseConnected = true;
-            updateFirebaseStatus(true);
-        } catch (error) {
-            console.error('❌ Firebase initialization error:', error);
-            showToast('Konfigurasi Firebase error. Mohon periksa config Anda.', 'error');
-            updateFirebaseStatus(false);
-        }
-
-        // ============================================
-        // UPDATE FIREBASE STATUS INDICATOR
-        // ============================================
-        function updateFirebaseStatus(connected) {
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('statusText');
-            
-            if (connected) {
-                statusDot.classList.add('connected');
-                statusText.textContent = 'Firebase Connected';
-            } else {
-                statusDot.classList.remove('connected');
-                statusText.textContent = 'Firebase Error';
+        // Pre-configured radio stations
+        const stations = [
+            {
+                name: "I-Radio",
+                genre: "Indonesian Hits",
+                url: "https://air.morat.com:9006/stream"
+            },
+            {
+                name: "Hardrock FM",
+                genre: "Rock & Metal",
+                url: "https://stream.hardrockfm.id/live"
+            },
+            {
+                name: "M Radio",
+                genre: "Pop & Chart",
+                url: "https://n038.solocpm.com/stream/7001"
+            },
+            {
+                name: "Gen FM Jakarta",
+                genre: "Pop Indonesia",
+                url: "https://air.solocpm.com/genfm.mp3"
+            },
+            {
+                name: "Prambors FM",
+                genre: "Youth & Pop",
+                url: "https://air.pramborsfm.com/live"
             }
-        }
+        ];
 
-        // ============================================
-        // GLOBAL STATE
-        // ============================================
-        
-        const state = {
-            stations: [],
-            currentStation: null,
-            isPlaying: false,
-            audio: new Audio(),
-            stationToDelete: null
-        };
+        let audio = new Audio();
+        let currentStation = null;
+        let isPlaying = false;
 
-        // DOM Elements
-        const elements = {
-            stationsGrid: document.getElementById('stationsGrid'),
-            stationCount: document.getElementById('stationCount'),
-            loadingSpinner: document.getElementById('loadingSpinner'),
-            emptyState: document.getElementById('emptyState'),
-            addModal: document.getElementById('addModal'),
-            deleteModal: document.getElementById('deleteModal'),
-            addStationFab: document.getElementById('addStationFab'),
-            closeModalBtn: document.getElementById('closeModalBtn'),
-            closeDeleteModalBtn: document.getElementById('closeDeleteModalBtn'),
-            addStationForm: document.getElementById('addStationForm'),
-            submitBtn: document.getElementById('submitBtn'),
-            nowPlayingBar: document.getElementById('nowPlayingBar'),
-            nowPlayingTitle: document.getElementById('nowPlayingTitle'),
-            nowPlayingGenre: document.getElementById('nowPlayingGenre'),
-            playPauseBtn: document.getElementById('playPauseBtn'),
-            volumeSlider: document.getElementById('volumeSlider'),
-            volumeIcon: document.getElementById('volumeIcon'),
-            visualizer: document.getElementById('visualizer'),
-            deleteStationName: document.getElementById('deleteStationName'),
-            confirmDeleteBtn: document.getElementById('confirmDeleteBtn'),
-            cancelDeleteBtn: document.getElementById('cancelDeleteBtn'),
-            toastContainer: document.getElementById('toastContainer')
-        };
+        const stationsEl = document.getElementById('stations');
+        const playerBar = document.getElementById('playerBar');
+        const nowTitle = document.getElementById('nowTitle');
+        const nowStatus = document.getElementById('nowStatus');
+        const playBtn = document.getElementById('playBtn');
+        const volumeSlider = document.getElementById('volume');
 
-        // ============================================
-        // AUDIO PLAYER FUNCTIONS
-        // ============================================
-
-        /**
-         * Play a radio station
-         * @param {Object} station - The station object to play
-         */
-        function playStation(station) {
-            if (!station || !station.url) {
-                showToast('URL stream tidak valid', 'error');
-                return;
-            }
-
-            // Stop current playback
-            stopPlayback();
-
-            // Update state
-            state.currentStation = station;
-            state.isPlaying = true;
-
-            // Update audio source
-            state.audio.src = station.url;
-            state.audio.volume = elements.volumeSlider.value / 100;
-            
-            // Play
-            state.audio.play().then(() => {
-                console.log(`🎵 Playing: ${station.name}`);
-            }).catch(error => {
-                console.error('Playback error:', error);
-                showToast('Gagal memutar stream. URL mungkin tidak valid.', 'error');
-                state.isPlaying = false;
-                updateUI();
-            });
-
-            // Update UI
-            updateUI();
-            updateNowPlaying();
-        }
-
-        /**
-         * Stop playback
-         */
-        function stopPlayback() {
-            state.audio.pause();
-            state.audio.src = '';
-            state.currentStation = null;
-            state.isPlaying = false;
-            updateUI();
-        }
-
-        /**
-         * Toggle play/pause
-         */
-        function togglePlayPause() {
-            if (state.isPlaying) {
-                state.audio.pause();
-                state.isPlaying = false;
-            } else {
-                if (state.currentStation) {
-                    state.audio.play();
-                    state.isPlaying = true;
-                }
-            }
-            updateUI();
-            updateNowPlaying();
-        }
-
-        /**
-         * Update all UI elements based on current state
-         */
-        function updateUI() {
-            // Update play/pause button
-            elements.playPauseBtn.textContent = state.isPlaying ? '⏸' : '▶';
-
-            // Update station cards
-            document.querySelectorAll('.station-card').forEach(card => {
-                const stationId = card.dataset.id;
-                if (state.currentStation && state.currentStation.id === stationId && state.isPlaying) {
-                    card.classList.add('playing');
-                } else {
-                    card.classList.remove('playing');
-                }
-            });
-
-            // Update now playing bar visibility
-            if (state.currentStation) {
-                elements.nowPlayingBar.classList.add('active');
-            } else {
-                elements.nowPlayingBar.classList.remove('active');
-            }
-        }
-
-        /**
-         * Update now playing bar information
-         */
-        function updateNowPlaying() {
-            if (state.currentStation) {
-                elements.nowPlayingTitle.textContent = state.currentStation.name;
-                elements.nowPlayingGenre.textContent = state.currentStation.genre || 'Radio Station';
-                elements.playPauseBtn.textContent = state.isPlaying ? '⏸' : '▶';
-                
-                if (state.isPlaying) {
-                    startVisualizerAnimation();
-                } else {
-                    stopVisualizerAnimation();
-                }
-            } else {
-                elements.nowPlayingTitle.textContent = 'Tidak Sedang Memutar';
-                elements.nowPlayingGenre.textContent = 'Pilih station untuk memulai';
-                stopVisualizerAnimation();
-            }
-        }
-
-        /**
-         * Start visualizer animation
-         */
-        let visualizerInterval;
-        function startVisualizerAnimation() {
-            const bars = elements.visualizer.querySelectorAll('.visualizer-bar');
-            visualizerInterval = setInterval(() => {
-                bars.forEach(bar => {
-                    const randomHeight = Math.random() * 30 + 5;
-                    bar.style.height = `${randomHeight}px`;
-                });
-            }, 150);
-        }
-
-        /**
-         * Stop visualizer animation
-         */
-        function stopVisualizerAnimation() {
-            if (visualizerInterval) {
-                clearInterval(visualizerInterval);
-            }
-            const bars = elements.visualizer.querySelectorAll('.visualizer-bar');
-            bars.forEach((bar, index) => {
-                bar.style.height = `${10 + index * 3}px`;
-            });
-        }
-
-        // ============================================
-        // FIREBASE FUNCTIONS
-        // ============================================
-
-        /**
-         * Fetch all stations from Firebase
-         */
-        function fetchStations() {
-            if (!database) {
-                elements.loadingSpinner.style.display = 'none';
-                showToast('Firebase tidak tersedia. Mohon periksa koneksi Anda.', 'error');
-                renderEmptyState();
-                return;
-            }
-
-            const radiosRef = database.ref('radios');
-            
-            radiosRef.on('value', (snapshot) => {
-                elements.loadingSpinner.style.display = 'none';
-                
-                const data = snapshot.val();
-                state.stations = data ? Object.entries(data).map(([id, station]) => ({
-                    id,
-                    ...station
-                })) : [];
-
-                renderStations();
-            }, (error) => {
-                console.error('Firebase read error:', error);
-                elements.loadingSpinner.style.display = 'none';
-                showToast('Gagal memuat stations. Periksa konfigurasi Firebase Anda.', 'error');
-                renderEmptyState();
-            });
-        }
-
-        /**
-         * Add a new station to Firebase
-         * @param {Object} stationData - Station data to add
-         */
-        function addStation(stationData) {
-            if (!database) {
-                showToast('Firebase tidak tersedia', 'error');
-                return;
-            }
-
-            const radiosRef = database.ref('radios');
-            
-            // Disable submit button
-            elements.submitBtn.disabled = true;
-            elements.submitBtn.innerHTML = '<span class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></span> Menambahkan...';
-
-            const newRef = radiosRef.push();
-            newRef.set({
-                name: stationData.name,
-                url: stationData.url,
-                genre: stationData.genre || 'General',
-                logo: stationData.logo || '',
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            }).then(() => {
-                showToast(`"${stationData.name}" berhasil ditambahkan!`, 'success');
-                closeModal();
-                resetForm();
-            }).catch((error) => {
-                console.error('Add station error:', error);
-                showToast('Gagal menambahkan station. Silakan coba lagi.', 'error');
-            }).finally(() => {
-                elements.submitBtn.disabled = false;
-                elements.submitBtn.innerHTML = '<span>➕</span> Tambah Station';
-            });
-        }
-
-        /**
-         * Delete a station from Firebase
-         * @param {string} stationId - ID of the station to delete
-         */
-        function deleteStation(stationId) {
-            if (!database) {
-                showToast('Firebase tidak tersedia', 'error');
-                return;
-            }
-
-            database.ref(`radios/${stationId}`).remove()
-                .then(() => {
-                    showToast('Station berhasil dihapus', 'success');
-                    
-                    // Stop playback if this station was playing
-                    if (state.currentStation && state.currentStation.id === stationId) {
-                        stopPlayback();
-                    }
-                    
-                    closeDeleteModal();
-                })
-                .catch((error) => {
-                    console.error('Delete error:', error);
-                    showToast('Gagal menghapus station', 'error');
-                });
-        }
-
-        // ============================================
-        // UI RENDERING FUNCTIONS
-        // ============================================
-
-        /**
-         * Render all stations to the grid
-         */
-        function renderStations() {
-            // Update count
-            elements.stationCount.textContent = `${state.stations.length} station${state.stations.length !== 1 ? 's' : ''}`;
-
-            // Handle empty state
-            if (state.stations.length === 0) {
-                renderEmptyState();
-                return;
-            }
-
-            // Show grid, hide empty state
-            elements.emptyState.style.display = 'none';
-            elements.stationsGrid.style.display = 'grid';
-
-            // Generate HTML
-            elements.stationsGrid.innerHTML = state.stations.map(station => `
-                <div class="station-card ${state.currentStation && state.currentStation.id === station.id && state.isPlaying ? 'playing' : ''}" 
-                     data-id="${station.id}">
-                    <div class="station-header">
-                        <div class="station-logo">
-                            ${station.logo ? 
-                                `<img src="${station.logo}" alt="${station.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='📻'">` : 
-                                '📻'}
-                        </div>
-                        <div class="station-info">
-                            <div class="station-name">${escapeHtml(station.name)}</div>
-                            <div class="station-genre">
-                                <span>🎵</span>
-                                ${escapeHtml(station.genre || 'General')}
-                            </div>
-                            ${state.currentStation && state.currentStation.id === station.id && state.isPlaying ? 
-                                '<div class="station-status">Sedang Diputar</div>' : ''}
-                        </div>
+        // Render stations
+        stations.forEach((station, index) => {
+            const el = document.createElement('div');
+            el.className = 'station';
+            el.innerHTML = `
+                <div class="station-header">
+                    <div>
+                        <div class="station-name">${station.name}</div>
+                        <div class="station-genre">${station.genre}</div>
                     </div>
-                    <div class="station-actions">
-                        <button class="action-btn play-btn" onclick="handlePlayStation('${station.id}')">
-                            ${state.currentStation && state.currentStation.id === station.id && state.isPlaying ? '⏸ Jeda' : '▶ Putar'}
-                        </button>
-                        <button class="action-btn delete-btn" onclick="handleDeleteClick('${station.id}', '${escapeHtml(station.name)}')">
-                            🗑️
-                        </button>
-                    </div>
+                    <div class="play-icon">▶</div>
                 </div>
-            `).join('');
-        }
-
-        /**
-         * Render empty state
-         */
-        function renderEmptyState() {
-            elements.stationsGrid.style.display = 'none';
-            elements.emptyState.style.display = 'block';
-            elements.stationCount.textContent = '0 stations';
-        }
-
-        /**
-         * Escape HTML to prevent XSS
-         * @param {string} text - Text to escape
-         * @returns {string} - Escaped text
-         */
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // ============================================
-        // EVENT HANDLERS
-        // ============================================
-
-        /**
-         * Handle play button click on station card
-         * @param {string} stationId - ID of station to play
-         */
-        function handlePlayStation(stationId) {
-            const station = state.stations.find(s => s.id === stationId);
-            if (!station) return;
-
-            // If same station, toggle play/pause
-            if (state.currentStation && state.currentStation.id === stationId) {
-                togglePlayPause();
-            } else {
-                // Play new station
-                playStation(station);
-            }
-        }
-
-        /**
-         * Handle delete button click
-         * @param {string} stationId - ID of station to delete
-         * @param {string} stationName - Name of station for display
-         */
-        function handleDeleteClick(stationId, stationName) {
-            state.stationToDelete = stationId;
-            elements.deleteStationName.textContent = stationName;
-            elements.deleteModal.classList.add('active');
-        }
-
-        /**
-         * Open add station modal
-         */
-        function openModal() {
-            elements.addModal.classList.add('active');
-        }
-
-        /**
-         * Close add station modal
-         */
-        function closeModal() {
-            elements.addModal.classList.remove('active');
-        }
-
-        /**
-         * Close delete confirmation modal
-         */
-        function closeDeleteModal() {
-            elements.deleteModal.classList.remove('active');
-            state.stationToDelete = null;
-        }
-
-        /**
-         * Reset form inputs
-         */
-        function resetForm() {
-            elements.addStationForm.reset();
-        }
-
-        /**
-         * Show toast notification
-         * @param {string} message - Message to display
-         * @param {string} type - 'success' or 'error'
-         */
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <span class="toast-icon">${type === 'success' ? '✅' : '❌'}</span>
-                <span class="toast-message">${message}</span>
             `;
-            
-            elements.toastContainer.appendChild(toast);
-
-            // Auto-remove after 4 seconds
-            setTimeout(() => {
-                toast.style.animation = 'toastSlide 0.3s ease reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        /**
-         * Handle volume change
-         */
-        function handleVolumeChange() {
-            const volume = elements.volumeSlider.value / 100;
-            state.audio.volume = volume;
-            
-            // Update volume icon
-            if (volume === 0) {
-                elements.volumeIcon.textContent = '🔇';
-            } else if (volume < 0.3) {
-                elements.volumeIcon.textContent = '🔈';
-            } else if (volume < 0.7) {
-                elements.volumeIcon.textContent = '🔉';
-            } else {
-                elements.volumeIcon.textContent = '🔊';
-            }
-        }
-
-        /**
-         * Handle mute toggle
-         */
-        function toggleMute() {
-            if (state.audio.volume > 0) {
-                state.previousVolume = state.audio.volume;
-                state.audio.volume = 0;
-                elements.volumeSlider.value = 0;
-            } else {
-                state.audio.volume = state.previousVolume || 0.7;
-                elements.volumeSlider.value = state.audio.volume * 100;
-            }
-            handleVolumeChange();
-        }
-
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-
-        // FAB click
-        elements.addStationFab.addEventListener('click', openModal);
-
-        // Close modal buttons
-        elements.closeModalBtn.addEventListener('click', closeModal);
-        elements.closeDeleteModalBtn.addEventListener('click', closeDeleteModal);
-
-        // Close modal on overlay click
-        elements.addModal.addEventListener('click', (e) => {
-            if (e.target === elements.addModal) closeModal();
-        });
-        elements.deleteModal.addEventListener('click', (e) => {
-            if (e.target === elements.deleteModal) closeDeleteModal();
+            el.onclick = () => playStation(index);
+            stationsEl.appendChild(el);
         });
 
-        // Add station form submit
-        elements.addStationForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        function playStation(index) {
+            const station = stations[index];
             
-            const stationData = {
-                name: document.getElementById('stationName').value.trim(),
-                url: document.getElementById('streamUrl').value.trim(),
-                genre: document.getElementById('genre').value.trim(),
-                logo: document.getElementById('logoUrl').value.trim()
-            };
-
-            if (!stationData.name || !stationData.url) {
-                showToast('Mohon isi bidang yang wajib diisi', 'error');
+            if (currentStation === index && isPlaying) {
+                // Pause
+                audio.pause();
+                isPlaying = false;
+                updateUI();
                 return;
             }
 
-            // Basic URL validation
-            try {
-                new URL(stationData.url);
-            } catch {
-                showToast('Mohon masukkan URL yang valid', 'error');
-                return;
-            }
+            // Play new station
+            audio.src = station.url;
+            audio.volume = volumeSlider.value / 100;
+            
+            playerBar.classList.add('active');
+            currentStation = index;
+            isPlaying = true;
 
-            addStation(stationData);
-        });
+            audio.play().then(() => {
+                updateUI();
+            }).catch(err => {
+                nowStatus.textContent = 'Stream tidak tersedia';
+                console.error(err);
+            });
 
-        // Delete confirmation buttons
-        elements.confirmDeleteBtn.addEventListener('click', () => {
-            if (state.stationToDelete) {
-                deleteStation(state.stationToDelete);
+            updateUI();
+        }
+
+        function updateUI() {
+            const els = document.querySelectorAll('.station');
+            
+            els.forEach((el, i) => {
+                el.classList.toggle('active', i === currentStation && isPlaying);
+                el.querySelector('.play-icon').textContent = 
+                    (i === currentStation && isPlaying) ? '⏸' : '▶';
+            });
+
+            if (currentStation !== null) {
+                nowTitle.textContent = stations[currentStation].name;
+                nowStatus.textContent = isPlaying ? 'Playing...' : 'Paused';
+                playBtn.textContent = isPlaying ? '⏸' : '▶';
             }
-        });
-        elements.cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+        }
 
         // Play/Pause button
-        elements.playPauseBtn.addEventListener('click', togglePlayPause);
+        playBtn.onclick = () => {
+            if (currentStation !== null) {
+                if (isPlaying) {
+                    audio.pause();
+                } else {
+                    audio.play();
+                }
+                isPlaying = !isPlaying;
+                updateUI();
+            }
+        };
 
-        // Volume slider
-        elements.volumeSlider.addEventListener('input', handleVolumeChange);
-
-        // Volume icon click (mute toggle)
-        elements.volumeIcon.addEventListener('click', toggleMute);
+        // Volume control
+        volumeSlider.oninput = () => {
+            audio.volume = volumeSlider.value / 100;
+        };
 
         // Audio events
-        state.audio.addEventListener('playing', () => {
-            state.isPlaying = true;
+        audio.onplay = () => { isPlaying = true; updateUI(); };
+        audio.onpause = () => { isPlaying = false; updateUI(); };
+        audio.onerror = () => { 
+            nowStatus.textContent = 'Stream error - coba station lain';
+            isPlaying = false;
             updateUI();
-            updateNowPlaying();
-        });
-
-        state.audio.addEventListener('pause', () => {
-            state.isPlaying = false;
-            updateUI();
-            updateNowPlaying();
-        });
-
-        state.audio.addEventListener('error', () => {
-            console.error('Audio error:', state.audio.error);
-            showToast('Error pemutaran stream. Station mungkin sedang offline.', 'error');
-            state.isPlaying = false;
-            state.currentStation = null;
-            updateUI();
-            updateNowPlaying();
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Escape to close modals
-            if (e.key === 'Escape') {
-                closeModal();
-                closeDeleteModal();
-            }
-            
-            // Space to toggle play/pause (when not in input)
-            if (e.key === ' ' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
-                e.preventDefault();
-                togglePlayPause();
-            }
-        });
-
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-
-        /**
-         * Initialize the application
-         */
-        function init() {
-            console.log('🚀 Initializing Radio Stream app...');
-            
-            // Set initial volume
-            state.audio.volume = 0.7;
-            
-            // Fetch stations from Firebase
-            if (database) {
-                fetchStations();
-            } else {
-                elements.loadingSpinner.style.display = 'none';
-                showToast('Firebase belum dikonfigurasi. Mohon tambahkan config Anda.', 'error');
-                renderEmptyState();
-            }
-
-            console.log('✅ App initialized');
-        }
-
-        // Start the app
-        document.addEventListener('DOMContentLoaded', init);
+        };
     </script>
-</body>
-</html>
-</script>
 </body>
 </html>
