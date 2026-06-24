@@ -12,28 +12,58 @@
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             color: #fff;
             min-height: 100vh;
-            padding: 2rem;
+            padding: 1.5rem;
+            padding-bottom: 180px;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .container { max-width: 600px; margin: 0 auto; }
 
         h1 {
             text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .station {
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+
+        .btn-secondary {
             background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .btn:hover { transform: scale(1.02); }
+
+        .station {
+            background: rgba(255,255,255,0.08);
             border-radius: 16px;
             padding: 1.2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             cursor: pointer;
             transition: all 0.3s;
             border: 2px solid transparent;
@@ -55,15 +85,8 @@
             align-items: center;
         }
 
-        .station-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .station-genre {
-            color: #888;
-            font-size: 0.85rem;
-        }
+        .station-name { font-weight: 600; font-size: 1.1rem; }
+        .station-genre { color: #888; font-size: 0.85rem; margin-top: 0.2rem; }
 
         .play-icon {
             width: 40px;
@@ -84,18 +107,29 @@
             right: 0;
             background: rgba(15, 15, 26, 0.98);
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            padding: 1rem 1.5rem;
             display: none;
-            align-items: center;
-            gap: 1rem;
+            flex-direction: column;
+            gap: 0.8rem;
         }
 
         .player-bar.active { display: flex; }
 
-        .player-info { flex: 1; }
-        
-        .player-title { font-weight: 600; }
+        .player-top {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .player-info { flex: 1; min-width: 0; }
+        .player-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-status { font-size: 0.8rem; color: #888; }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
         .player-btn {
             width: 50px;
@@ -106,178 +140,352 @@
             color: #fff;
             font-size: 1.2rem;
             cursor: pointer;
+            flex-shrink: 0;
         }
+
+        .player-btn:hover { transform: scale(1.05); }
+
+        .volume-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mute-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .mute-btn:hover { background: rgba(255,255,255,0.2); }
 
         .volume-slider {
             width: 80px;
-            accent-color: #667eea;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            cursor: pointer;
         }
 
-        /* Loading indicator */
-        .loading {
-            text-align: center;
-            padding: 2rem;
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .modal h2 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
             color: #888;
         }
 
-        .loader {
-            width: 30px;
-            height: 30px;
-            border: 3px solid #333;
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1rem;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .form-group input::placeholder { color: #666; }
+        .form-group input:focus { outline: none; border-color: #667eea; }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .modal-actions .btn { flex: 1; justify-content: center; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 200;
+            display: none;
+        }
+
+        .toast.show { display: block; }
+        .toast.error { border-color: #ef4444; }
+        .toast.success { border-color: #10b981; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📻 Radio Stream</h1>
+        
+        <div class="header-actions">
+            <button class="btn btn-primary" onclick="openAddModal()">➕ Tambah Station</button>
+        </div>
+
         <div id="stations"></div>
     </div>
 
     <!-- Player Bar -->
     <div class="player-bar" id="playerBar">
-        <div class="player-info">
-            <div class="player-title" id="nowTitle">-</div>
-            <div class="player-status" id="nowStatus">Stopped</div>
+        <div class="player-top">
+            <div class="player-info">
+                <div class="player-title" id="nowTitle">-</div>
+                <div class="player-status" id="nowStatus">Stopped</div>
+            </div>
+            <div class="player-controls">
+                <button class="player-btn" id="playBtn" onclick="togglePlay()">▶</button>
+                <div class="volume-group">
+                    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+                    <input type="range" class="volume-slider" id="volume" min="0" max="100" value="70">
+                </div>
+            </div>
         </div>
-        <button class="player-btn" id="playBtn">▶</button>
-        <input type="range" class="volume-slider" id="volume" min="0" max="100" value="70">
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Add Station Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <h2>➕ Tambah Radio Station</h2>
+            <div class="form-group">
+                <label>Nama Station *</label>
+                <input type="text" id="newName" placeholder="Contoh: Jazz FM">
+            </div>
+            <div class="form-group">
+                <label>Genre</label>
+                <input type="text" id="newGenre" placeholder="Contoh: Jazz, Pop, Rock">
+            </div>
+            <div class="form-group">
+                <label>URL Stream *</label>
+                <input type="url" id="newUrl" placeholder="Contoh: https://stream.example.com/live">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeAddModal()">Batal</button>
+                <button class="btn btn-primary" onclick="addStation()">Tambah</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Pre-configured radio stations
-        const stations = [
-            {
-                name: "I-Radio",
-                genre: "Indonesian Hits",
-                url: "https://air.morat.com:9006/stream"
-            },
-            {
-                name: "Hardrock FM",
-                genre: "Rock & Metal",
-                url: "https://stream.hardrockfm.id/live"
-            },
-            {
-                name: "M Radio",
-                genre: "Pop & Chart",
-                url: "https://n038.solocpm.com/stream/7001"
-            },
-            {
-                name: "Gen FM Jakarta",
-                genre: "Pop Indonesia",
-                url: "https://air.solocpm.com/genfm.mp3"
-            },
-            {
-                name: "Prambors FM",
-                genre: "Youth & Pop",
-                url: "https://air.pramborsfm.com/live"
-            }
+        // Initial stations
+        let stations = [
+            { name: "I-Radio", genre: "Indonesian Hits", url: "https://air.morat.com:9006/stream" },
+            { name: "Hardrock FM", genre: "Rock & Metal", url: "https://stream.hardrockfm.id/live" },
+            { name: "Prambors FM", genre: "Youth & Pop", url: "https://air.pramborsfm.com/live" },
+            { name: "Gen FM Jakarta", genre: "Pop Indonesia", url: "https://air.solocpm.com/genfm.mp3" },
+            { name: "M Radio", genre: "Pop & Chart", url: "https://n038.solocpm.com/stream/7001" }
         ];
 
         let audio = new Audio();
         let currentStation = null;
         let isPlaying = false;
-
-        const stationsEl = document.getElementById('stations');
-        const playerBar = document.getElementById('playerBar');
-        const nowTitle = document.getElementById('nowTitle');
-        const nowStatus = document.getElementById('nowStatus');
-        const playBtn = document.getElementById('playBtn');
-        const volumeSlider = document.getElementById('volume');
+        let isMuted = false;
+        let prevVolume = 70;
 
         // Render stations
-        stations.forEach((station, index) => {
-            const el = document.createElement('div');
-            el.className = 'station';
-            el.innerHTML = `
-                <div class="station-header">
-                    <div>
-                        <div class="station-name">${station.name}</div>
-                        <div class="station-genre">${station.genre}</div>
+        function renderStations() {
+            const container = document.getElementById('stations');
+            container.innerHTML = stations.map((s, i) => `
+                <div class="station ${currentStation === i && isPlaying ? 'active' : ''}" onclick="playStation(${i})">
+                    <div class="station-header">
+                        <div>
+                            <div class="station-name">${s.name}</div>
+                            <div class="station-genre">${s.genre}</div>
+                        </div>
+                        <div class="play-icon">${currentStation === i && isPlaying ? '⏸' : '▶'}</div>
                     </div>
-                    <div class="play-icon">▶</div>
                 </div>
-            `;
-            el.onclick = () => playStation(index);
-            stationsEl.appendChild(el);
-        });
+            `).join('');
+        }
 
         function playStation(index) {
             const station = stations[index];
-            
+
             if (currentStation === index && isPlaying) {
-                // Pause
                 audio.pause();
                 isPlaying = false;
                 updateUI();
                 return;
             }
 
-            // Play new station
             audio.src = station.url;
-            audio.volume = volumeSlider.value / 100;
+            audio.volume = document.getElementById('volume').value / 100;
             
-            playerBar.classList.add('active');
+            document.getElementById('playerBar').classList.add('active');
             currentStation = index;
             isPlaying = true;
 
-            audio.play().then(() => {
-                updateUI();
-            }).catch(err => {
-                nowStatus.textContent = 'Stream tidak tersedia';
-                console.error(err);
-            });
+            audio.play()
+                .then(() => {
+                    updateUI();
+                    showToast(`Memutar: ${station.name}`, 'success');
+                })
+                .catch(err => {
+                    showToast('Stream tidak tersedia', 'error');
+                    console.error('Playback error:', err);
+                });
 
             updateUI();
         }
 
-        function updateUI() {
-            const els = document.querySelectorAll('.station');
+        function togglePlay() {
+            if (currentStation === null) {
+                showToast('Pilih station terlebih dahulu', 'error');
+                return;
+            }
             
-            els.forEach((el, i) => {
-                el.classList.toggle('active', i === currentStation && isPlaying);
-                el.querySelector('.play-icon').textContent = 
-                    (i === currentStation && isPlaying) ? '⏸' : '▶';
-            });
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play().catch(err => {
+                    showToast('Gagal memutar', 'error');
+                });
+            }
+            isPlaying = !isPlaying;
+            updateUI();
+        }
 
-            if (currentStation !== null) {
-                nowTitle.textContent = stations[currentStation].name;
-                nowStatus.textContent = isPlaying ? 'Playing...' : 'Paused';
-                playBtn.textContent = isPlaying ? '⏸' : '▶';
+        function toggleMute() {
+            if (isMuted) {
+                audio.volume = prevVolume / 100;
+                document.getElementById('volume').value = prevVolume;
+                isMuted = false;
+                document.getElementById('muteBtn').textContent = '🔊';
+            } else {
+                prevVolume = document.getElementById('volume').value;
+                audio.volume = 0;
+                document.getElementById('volume').value = 0;
+                isMuted = true;
+                document.getElementById('muteBtn').textContent = '🔇';
             }
         }
 
-        // Play/Pause button
-        playBtn.onclick = () => {
-            if (currentStation !== null) {
-                if (isPlaying) {
-                    audio.pause();
-                } else {
-                    audio.play();
-                }
-                isPlaying = !isPlaying;
-                updateUI();
-            }
-        };
+        function updateUI() {
+            document.getElementById('playBtn').textContent = isPlaying ? '⏸' : '▶';
+            document.getElementById('nowTitle').textContent = currentStation !== null ? stations[currentStation].name : '-';
+            document.getElementById('nowStatus').textContent = isPlaying ? '🔴 Playing...' : 'Paused';
+            renderStations();
+        }
 
         // Volume control
-        volumeSlider.oninput = () => {
-            audio.volume = volumeSlider.value / 100;
+        document.getElementById('volume').oninput = (e) => {
+            audio.volume = e.target.value / 100;
+            if (e.target.value > 0 && isMuted) {
+                toggleMute();
+            }
         };
 
         // Audio events
         audio.onplay = () => { isPlaying = true; updateUI(); };
         audio.onpause = () => { isPlaying = false; updateUI(); };
-        audio.onerror = () => { 
-            nowStatus.textContent = 'Stream error - coba station lain';
+        audio.onerror = () => {
+            showToast('Stream error - coba station lain', 'error');
             isPlaying = false;
             updateUI();
         };
+
+        // Modal functions
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('newName').value = '';
+            document.getElementById('newGenre').value = '';
+            document.getElementById('newUrl').value = '';
+        }
+
+        function addStation() {
+            const name = document.getElementById('newName').value.trim();
+            const genre = document.getElementById('newGenre').value.trim() || 'General';
+            const url = document.getElementById('newUrl').value.trim();
+
+            if (!name || !url) {
+                showToast('Nama dan URL wajib diisi', 'error');
+                return;
+            }
+
+            try {
+                new URL(url);
+            } catch {
+                showToast('URL tidak valid', 'error');
+                return;
+            }
+
+            stations.push({ name, genre, url });
+            renderStations();
+            closeAddModal();
+            showToast(`"${name}" ditambahkan!`, 'success');
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Close modal on overlay click
+        document.getElementById('addModal').onclick = (e) => {
+            if (e.target === document.getElementById('addModal')) closeAddModal();
+        };
+
+        // Keyboard: Escape to close
+        document.onkeydown = (e) => {
+            if (e.key === 'Escape') closeAddModal();
+        };
+
+        // Initial render
+        renderStations();
     </script>
 </body>
 </html>
